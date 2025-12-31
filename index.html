@@ -4,243 +4,235 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UQ Buddy Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --gradient-main: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-      --gradient-fire: linear-gradient(135deg, #ff6b6b 0%, #ffa502 100%);
-      --gradient-next: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-      --bg-light: #f8f9ff;
-      --text-dark: #2d3436;
-      --text-muted: #636e72;
-      --accent-green: #00d26a;
-      --accent-orange: #ff9f43;
-      --accent-red: #ff6b6b;
-      --shadow-sm: 0 2px 10px rgba(102, 126, 234, 0.1);
-      --shadow-md: 0 10px 30px rgba(102, 126, 234, 0.15);
+      --bg-primary: #0f0f1a;
+      --bg-secondary: #1a1a2e;
+      --bg-card: #16213e;
+      --accent-gold: #f6c90e;
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --accent-orange: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-purple: #8b5cf6;
+      --accent-pink: #ec4899;
+      --text-primary: #ffffff;
+      --text-secondary: #94a3b8;
+      --border-color: #2d3748;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Prompt', sans-serif; background: var(--bg-light); color: var(--text-dark); min-height: 100vh; }
+    body { font-family: 'Prompt', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+    .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at 20% 20%, rgba(59,130,246,0.15) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(139,92,246,0.1) 0%, transparent 50%); }
     
-    .header { background: var(--gradient-main); padding: 20px 30px; color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-md); }
-    .header-left { display: flex; align-items: center; gap: 15px; }
-    .logo { font-size: 2.5rem; animation: bounce 2s infinite; }
-    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-    .header h1 { font-size: 1.6rem; font-weight: 700; }
-    .header-week { font-size: 0.9rem; opacity: 0.9; }
-    .header-right { display: flex; align-items: center; gap: 15px; }
-    .live-badge { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; }
-    .live-dot { width: 10px; height: 10px; background: #00ff88; border-radius: 50%; animation: pulse 1.5s infinite; box-shadow: 0 0 10px #00ff88; }
-    .live-dot.demo { background: #ffa502; box-shadow: 0 0 10px #ffa502; }
-    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); opacity: 0.7; } }
-    .refresh-btn { background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); padding: 10px 20px; border-radius: 12px; color: white; font-family: 'Prompt', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-    .refresh-btn:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
+    /* Header */
+    .header { background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card)); padding: 1rem 2rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .logo { display: flex; align-items: center; gap: 0.75rem; }
+    .logo-icon { width: 45px; height: 45px; background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+    .logo-text h1 { font-family: 'Kanit', sans-serif; font-size: 1.2rem; background: linear-gradient(135deg, var(--accent-gold), var(--text-primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .logo-text p { font-size: 0.75rem; color: var(--text-secondary); }
+    .header-right { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .week-badge { background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue)); padding: 0.35rem 0.75rem; border-radius: 14px; font-size: 0.8rem; font-weight: 600; }
+    .btn { border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 0.8rem; display: flex; align-items: center; gap: 0.3rem; transition: all 0.2s; }
+    .btn-refresh { background: linear-gradient(135deg, var(--accent-green), var(--accent-blue)); color: white; }
+    .btn-settings { background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); color: white; }
+    .btn:hover { opacity: 0.9; transform: scale(1.02); }
+    .data-source { font-size: 0.65rem; padding: 0.15rem 0.4rem; border-radius: 4px; }
+    .data-source.live { background: rgba(16,185,129,0.2); color: var(--accent-green); }
+    .data-source.demo { background: rgba(245,158,11,0.2); color: var(--accent-orange); }
     
-    .nav-tabs { display: flex; gap: 8px; padding: 20px 30px; background: white; border-bottom: 1px solid #eee; overflow-x: auto; }
-    .nav-tab { background: var(--bg-light); border: 2px solid transparent; padding: 12px 24px; border-radius: 12px; color: var(--text-muted); font-family: 'Prompt', sans-serif; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: all 0.3s; white-space: nowrap; }
-    .nav-tab:hover { border-color: #764ba2; color: #764ba2; }
-    .nav-tab.active { background: var(--gradient-main); color: white; box-shadow: var(--shadow-md); }
+    /* Tabs */
+    .nav-tabs { display: flex; gap: 0.4rem; padding: 0.75rem 2rem; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); overflow-x: auto; }
+    .nav-tab { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 8px; color: var(--text-secondary); font-size: 0.85rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+    .nav-tab:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+    .nav-tab.active { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border-color: transparent; }
     
-    .main-content { padding: 30px; max-width: 1400px; margin: 0 auto; }
+    /* Main */
+    .main-content { padding: 1.5rem 2rem; max-width: 1400px; margin: 0 auto; }
     .tab-content { display: none; }
-    .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     
-    .challenge-banner { background: var(--gradient-fire); border-radius: 20px; padding: 25px 30px; margin-bottom: 25px; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-md); position: relative; overflow: hidden; }
-    .challenge-banner::before { content: '🔥'; position: absolute; font-size: 8rem; right: -20px; top: -20px; opacity: 0.2; }
-    .challenge-banner.next-game { background: var(--gradient-next); color: var(--text-dark); }
-    .challenge-banner.next-game::before { content: '🎮'; }
-    .challenge-banner.completed { background: var(--gradient-success); }
-    .challenge-banner.completed::before { content: '🎉'; }
-    .challenge-left h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
-    .challenge-left p { opacity: 0.9; font-size: 0.95rem; }
+    /* Challenge Banner */
+    .challenge-banner { background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(245,158,11,0.2)); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .challenge-banner.next { background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(59,130,246,0.15)); }
+    .challenge-left h2 { font-size: 1.1rem; margin-bottom: 0.3rem; }
+    .challenge-left p { font-size: 0.85rem; color: var(--text-secondary); }
     .challenge-right { text-align: center; }
-    .time-left { font-size: 2.5rem; font-weight: 800; }
-    .time-label { font-size: 0.85rem; opacity: 0.9; }
-    .next-day { font-size: 1.5rem; font-weight: 700; }
-    .next-date { font-size: 0.9rem; opacity: 0.8; margin-top: 5px; }
+    .time-display { font-size: 1.8rem; font-weight: 700; color: var(--accent-gold); }
+    .time-label { font-size: 0.75rem; color: var(--text-secondary); }
     
-    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
-    .dashboard-grid.top-row-3 { grid-template-columns: 1fr 180px 1fr; margin-bottom: 25px; gap: 20px; }
-    @media (max-width: 900px) { .dashboard-grid.top-row-3 { grid-template-columns: 1fr; } }
+    /* Stats Row */
+    .stats-row { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 0.6rem 1rem; text-align: center; min-width: 90px; }
+    .stat-card .value { font-size: 1.3rem; font-weight: 700; color: var(--accent-gold); }
+    .stat-card .label { font-size: 0.7rem; color: var(--text-secondary); }
     
-    .card { background: white; border-radius: 20px; padding: 25px; box-shadow: var(--shadow-sm); transition: all 0.3s; border: 2px solid transparent; }
-    .card:hover { box-shadow: var(--shadow-md); transform: translateY(-5px); border-color: #667eea; }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .card-title { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
-    .card-badge { font-size: 0.8rem; padding: 6px 14px; border-radius: 20px; font-weight: 600; }
-    .card-badge.success { background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); color: #155724; }
-    .card-badge.warning { background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%); color: #856404; }
+    /* Grid */
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; }
+    .card { background: linear-gradient(145deg, var(--bg-card), var(--bg-secondary)); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
+    .card.full-width { grid-column: 1 / -1; }
+    .card-header { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; }
+    .card-body { padding: 1rem; }
     
-    .motivation-box { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 16px; padding: 20px; color: white; text-align: center; }
-    .motivation-emoji { font-size: 3rem; margin-bottom: 10px; }
-    .motivation-text { font-size: 1.1rem; font-weight: 600; }
-    .motivation-sub { font-size: 0.9rem; opacity: 0.9; margin-top: 5px; }
+    /* Progress */
+    .progress-section { margin-bottom: 1rem; }
+    .progress-header { display: flex; justify-content: space-between; margin-bottom: 0.4rem; font-size: 0.85rem; }
+    .progress-count { font-weight: 700; color: var(--accent-gold); }
+    .progress-bar { height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+    .progress-fill.mtk { background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple)); }
+    .progress-fill.arp { background: linear-gradient(90deg, var(--accent-green), var(--accent-blue)); }
     
-    .streak-card { background: var(--gradient-success); border-radius: 16px; padding: 20px; color: white; text-align: center; }
-    .streak-fire { font-size: 2rem; margin-bottom: 5px; }
-    .streak-number { font-size: 3rem; font-weight: 800; line-height: 1; }
-    .streak-label { font-size: 0.9rem; opacity: 0.9; margin-top: 5px; }
+    /* Campaign List */
+    .campaign-list { display: grid; gap: 0.35rem; }
+    .campaign-item { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.6rem; background: rgba(255,255,255,0.03); border-radius: 5px; border-left: 3px solid transparent; font-size: 0.85rem; }
+    .campaign-item.done { border-left-color: var(--accent-green); }
+    .campaign-item.pending { border-left-color: var(--accent-orange); }
+    .campaign-status { font-size: 0.7rem; padding: 0.1rem 0.4rem; border-radius: 8px; }
+    .campaign-status.done { background: rgba(16,185,129,0.2); color: var(--accent-green); }
+    .campaign-status.pending { background: rgba(245,158,11,0.2); color: var(--accent-orange); }
     
-    .progress-ring-container { display: flex; justify-content: center; margin-bottom: 20px; }
-    .progress-ring { position: relative; width: 140px; height: 140px; }
-    .progress-ring svg { transform: rotate(-90deg); }
-    .progress-ring .bg { fill: none; stroke: #e9ecef; stroke-width: 12; }
-    .progress-ring .progress { fill: none; stroke: url(#gradient); stroke-width: 12; stroke-linecap: round; stroke-dasharray: 377; stroke-dashoffset: 377; transition: stroke-dashoffset 1s ease; }
-    .progress-ring .center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
-    .progress-ring .percentage { font-size: 2rem; font-weight: 700; }
-    .progress-ring .label { font-size: 0.8rem; color: var(--text-muted); }
+    /* UQ Friends Section */
+    .friends-section { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border-color); }
+    .friends-title { font-size: 0.75rem; color: var(--accent-pink); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.3rem; }
+    .friends-note { font-size: 0.65rem; color: var(--text-secondary); font-style: italic; }
+    .friend-item { display: flex; justify-content: space-between; align-items: center; padding: 0.35rem 0.5rem; background: rgba(236,72,153,0.05); border-radius: 5px; margin-bottom: 0.3rem; font-size: 0.8rem; border-left: 3px solid var(--accent-pink); }
+    .friend-item.done { border-left-color: var(--accent-green); background: rgba(16,185,129,0.05); }
+    .friend-checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-green); }
     
-    .status-list { display: flex; flex-direction: column; gap: 10px; }
-    .status-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: var(--bg-light); border-radius: 12px; transition: all 0.2s; border-left: 4px solid transparent; }
-    .status-item:hover { transform: translateX(5px); }
-    .status-item.done { border-left-color: var(--accent-green); background: linear-gradient(90deg, rgba(0,210,106,0.1) 0%, var(--bg-light) 100%); }
-    .status-item.pending { border-left-color: var(--accent-orange); background: linear-gradient(90deg, rgba(255,159,67,0.1) 0%, var(--bg-light) 100%); }
-    .status-item-left { display: flex; align-items: center; gap: 12px; }
-    .status-icon { font-size: 1.3rem; }
-    .status-name { font-weight: 500; }
-    .status-value { font-size: 0.85rem; padding: 4px 12px; border-radius: 8px; font-weight: 600; }
-    .status-value.done { background: var(--accent-green); color: white; }
-    .status-value.pending { background: var(--accent-orange); color: white; }
+    /* Leaderboard */
+    .leaderboard-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.03); border-radius: 6px; margin-bottom: 0.35rem; }
+    .leaderboard-item.gold { background: linear-gradient(135deg, rgba(246,201,14,0.15), rgba(255,255,255,0.03)); border: 1px solid rgba(246,201,14,0.3); }
+    .rank-badge { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+    .rank-badge.r1 { background: linear-gradient(135deg, #ffd700, #ffb700); }
+    .rank-badge.r2 { background: linear-gradient(135deg, #c0c0c0, #a8a8a8); }
+    .rank-badge.r3 { background: linear-gradient(135deg, #cd7f32, #a0522d); color: #fff; }
+    .user-info { flex: 1; }
+    .user-name { font-weight: 600; font-size: 0.85rem; }
+    .user-title { font-size: 0.65rem; padding: 0.1rem 0.3rem; border-radius: 3px; background: rgba(246,201,14,0.2); color: var(--accent-gold); margin-left: 0.25rem; }
+    .user-time { font-size: 0.7rem; color: var(--text-secondary); }
+    .badge-count { font-size: 0.65rem; padding: 0.1rem 0.3rem; border-radius: 3px; background: rgba(255,255,255,0.1); margin-left: 0.2rem; }
     
-    .checklist-table { width: 100%; border-collapse: collapse; }
-    .checklist-table th { text-align: left; padding: 12px; color: var(--text-muted); font-weight: 500; font-size: 0.85rem; border-bottom: 2px solid #eee; }
-    .checklist-table td { padding: 16px 12px; border-bottom: 1px solid #f0f0f0; }
-    .checklist-table tr:last-child td { border-bottom: none; }
-    .day-label { font-weight: 600; display: flex; align-items: center; gap: 12px; }
-    .day-icon { font-size: 1.5rem; }
-    .check-icon { font-size: 1.2rem; }
-    .check-icon.done { color: var(--accent-green); }
-    .check-icon.pending { color: var(--accent-orange); }
+    /* Badges Grid */
+    .badges-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+    .badge-item { padding: 0.6rem; background: rgba(255,255,255,0.03); border-radius: 6px; text-align: center; }
+    .badge-item .icon { font-size: 1.3rem; }
+    .badge-item .label { font-size: 0.65rem; color: var(--text-secondary); margin: 0.2rem 0; }
+    .badge-item .count { font-size: 1.1rem; font-weight: 700; color: var(--accent-gold); }
     
-    .leaderboard-mini { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; padding: 20px; color: white; box-shadow: var(--shadow-md); }
-    .leaderboard-mini-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-    .leaderboard-mini-trophy { font-size: 1.8rem; animation: trophyBounce 2s infinite; }
-    @keyframes trophyBounce { 0%, 100% { transform: scale(1) rotate(-5deg); } 50% { transform: scale(1.1) rotate(5deg); } }
-    .leaderboard-mini-title { font-size: 1rem; font-weight: 700; }
-    .leaderboard-mini-list { display: flex; flex-direction: column; gap: 8px; }
-    .leaderboard-mini-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: rgba(255,255,255,0.15); border-radius: 10px; transition: all 0.3s; }
-    .leaderboard-mini-item:hover { background: rgba(255,255,255,0.25); transform: translateX(5px); }
-    .leaderboard-mini-item.first { background: linear-gradient(135deg, rgba(255,215,0,0.3) 0%, rgba(255,215,0,0.1) 100%); border: 1px solid rgba(255,215,0,0.4); }
-    .leaderboard-mini-rank { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; }
-    .leaderboard-mini-rank.gold { background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%); color: #333; box-shadow: 0 2px 10px rgba(255,215,0,0.4); }
-    .leaderboard-mini-rank.silver { background: linear-gradient(135deg, #e0e0e0 0%, #b0b0b0 100%); color: #333; }
-    .leaderboard-mini-rank.bronze { background: linear-gradient(135deg, #cd7f32 0%, #a0522d 100%); color: white; }
-    .leaderboard-mini-name { flex: 1; font-weight: 500; font-size: 0.9rem; }
-    .leaderboard-mini-time { font-weight: 700; font-size: 0.9rem; color: #ffd700; }
-    .leaderboard-mini-empty { text-align: center; padding: 15px; opacity: 0.9; font-size: 0.9rem; }
-    
-    /* Ranking Tabs */
-    .ranking-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
-    .ranking-tab { flex: 1; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 12px; background: var(--bg-light); font-family: 'Prompt', sans-serif; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.3s; }
-    .ranking-tab:hover { border-color: #667eea; color: #667eea; }
-    .ranking-tab.active { background: var(--gradient-main); color: white; border-color: transparent; box-shadow: var(--shadow-sm); }
-    .ranking-content { display: none; }
-    .ranking-content.active { display: block; animation: fadeIn 0.3s ease; }
-    
-    .ranking-section { margin-bottom: 20px; }
-    .ranking-title { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 12px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
-    .ranking-list { display: flex; flex-direction: column; gap: 10px; }
-    .ranking-item { background: var(--bg-light); border-radius: 12px; border-left: 4px solid transparent; padding: 12px 16px; }
-    .ranking-item.best { border-left-color: var(--accent-green); background: linear-gradient(90deg, rgba(0,210,106,0.08) 0%, var(--bg-light) 100%); }
-    .ranking-item.worst { border-left-color: var(--accent-red); background: linear-gradient(90deg, rgba(255,107,107,0.08) 0%, var(--bg-light) 100%); }
-    .ranking-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .ranking-item-left { display: flex; align-items: center; gap: 10px; }
-    .ranking-star { font-size: 1.2rem; }
-    .ranking-value { font-weight: 700; padding: 4px 10px; border-radius: 8px; font-size: 0.85rem; }
-    .ranking-value.best { background: rgba(0,210,106,0.15); color: var(--accent-green); }
-    .ranking-value.worst { background: rgba(255,107,107,0.15); color: var(--accent-red); }
-    .ranking-campaign { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; word-break: break-word; margin-bottom: 8px; }
-    .copy-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 6px 12px; border-radius: 8px; color: white; font-size: 0.75rem; font-family: 'Prompt', sans-serif; cursor: pointer; transition: all 0.2s; }
-    .copy-btn:hover { transform: scale(1.05); box-shadow: var(--shadow-sm); }
-    .copy-btn.copied { background: var(--gradient-success); }
+    /* Summary Tabs */
+    .summary-tabs { display: flex; gap: 0.4rem; margin-bottom: 1rem; }
+    .summary-tab { flex: 1; padding: 0.5rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; text-align: center; font-size: 0.8rem; transition: all 0.2s; }
+    .summary-tab:hover { background: rgba(255,255,255,0.1); }
+    .summary-tab.active { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); border-color: transparent; }
+    .summary-content { display: none; }
+    .summary-content.active { display: block; }
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .summary-grid { grid-template-columns: 1fr; } }
+    .summary-section { background: rgba(255,255,255,0.03); padding: 0.75rem; border-radius: 6px; }
+    .summary-section h4 { font-size: 0.8rem; margin-bottom: 0.5rem; }
+    .summary-section h4.best { color: var(--accent-green); }
+    .summary-section h4.worst { color: var(--accent-red); }
+    .below-note { font-size: 0.65rem; color: var(--text-secondary); margin-bottom: 0.5rem; padding: 0.3rem 0.5rem; background: rgba(255,255,255,0.03); border-radius: 4px; }
+    .summary-item { padding: 0.5rem; background: rgba(255,255,255,0.03); border-radius: 5px; margin-bottom: 0.4rem; border-left: 3px solid transparent; }
+    .summary-item.best-item { border-left-color: var(--accent-green); }
+    .summary-item.worst-item { border-left-color: var(--accent-red); }
+    .summary-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; }
+    .summary-item .rank { font-weight: 700; font-size: 0.85rem; }
+    .summary-item .rank.r1 { color: #ffd700; }
+    .summary-item .rank.r2 { color: #c0c0c0; }
+    .summary-item .rank.r3 { color: #cd7f32; }
+    .summary-item .result { font-weight: 600; color: var(--accent-gold); background: rgba(246,201,14,0.15); padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.75rem; }
+    .summary-item .campaign-full { font-size: 0.7rem; color: var(--text-secondary); line-height: 1.3; word-break: break-word; margin-bottom: 0.3rem; }
+    .copy-btn { background: rgba(59,130,246,0.2); border: 1px solid var(--accent-blue); color: var(--accent-blue); padding: 0.2rem 0.4rem; border-radius: 3px; cursor: pointer; font-size: 0.65rem; transition: all 0.2s; }
+    .copy-btn:hover { background: var(--accent-blue); color: white; }
+    .copy-btn.copied { background: var(--accent-green); border-color: var(--accent-green); color: white; }
     
     /* Simulator */
-    .simulator-container { display: grid; grid-template-columns: 320px 1fr; gap: 30px; }
-    @media (max-width: 900px) { .simulator-container { grid-template-columns: 1fr; } }
-    .phone { width: 320px; height: 640px; background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 40px; padding: 10px; box-shadow: var(--shadow-md); margin: 0 auto; }
-    .phone-screen { background: #7bb4e3; height: 100%; border-radius: 32px; overflow: hidden; display: flex; flex-direction: column; }
-    .phone-header { background: #06c755; color: white; padding: 15px; display: flex; align-items: center; gap: 10px; }
-    .phone-header .avatar { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-    .phone-header .group-name { font-weight: 600; }
-    .phone-header .group-members { font-size: 0.75rem; opacity: 0.8; }
-    .chat-area { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-    .message { max-width: 85%; padding: 10px 14px; border-radius: 18px; font-size: 0.9rem; line-height: 1.4; }
+    .simulator-container { display: grid; grid-template-columns: 300px 1fr; gap: 1.5rem; }
+    @media (max-width: 800px) { .simulator-container { grid-template-columns: 1fr; } }
+    .phone { width: 300px; height: 550px; background: linear-gradient(145deg, #1a1a1a, #2d2d2d); border-radius: 30px; padding: 8px; margin: 0 auto; }
+    .phone-screen { background: #7bb4e3; height: 100%; border-radius: 24px; overflow: hidden; display: flex; flex-direction: column; }
+    .phone-header { background: #06c755; color: white; padding: 12px; display: flex; align-items: center; gap: 8px; }
+    .phone-header .avatar { width: 35px; height: 35px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .phone-header .group-name { font-weight: 600; font-size: 0.9rem; }
+    .phone-header .group-members { font-size: 0.7rem; opacity: 0.8; }
+    .chat-area { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .message { max-width: 85%; padding: 8px 12px; border-radius: 14px; font-size: 0.85rem; line-height: 1.3; }
     .message.user { background: #06c755; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
     .message.bot { background: white; color: #333; align-self: flex-start; border-bottom-left-radius: 4px; white-space: pre-line; }
-    .message.bot .bot-name { font-size: 0.7rem; color: #06c755; font-weight: 600; margin-bottom: 4px; }
+    .message.bot .bot-name { font-size: 0.65rem; color: #06c755; font-weight: 600; margin-bottom: 3px; }
     .message.bot .mention-tag { color: #0091ea; font-weight: 600; }
-    .chat-input { background: white; padding: 10px; display: flex; gap: 8px; }
-    .chat-input input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 10px 15px; font-size: 0.9rem; font-family: 'Prompt', sans-serif; outline: none; }
-    .chat-input input:focus { border-color: #06c755; }
-    .chat-input button { background: #06c755; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; }
-    .typing-indicator { display: flex; gap: 4px; padding: 10px 14px; background: white; border-radius: 18px; width: fit-content; }
-    .typing-indicator span { width: 8px; height: 8px; background: #999; border-radius: 50%; animation: typing 1.4s infinite; }
+    .chat-input { background: white; padding: 8px; display: flex; gap: 6px; }
+    .chat-input input { flex: 1; border: 1px solid #ddd; border-radius: 16px; padding: 8px 12px; font-size: 0.85rem; outline: none; }
+    .chat-input button { background: #06c755; color: white; border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-size: 1rem; }
+    .typing-indicator { display: flex; gap: 3px; padding: 8px 12px; background: white; border-radius: 14px; width: fit-content; }
+    .typing-indicator span { width: 6px; height: 6px; background: #999; border-radius: 50%; animation: typing 1.4s infinite; }
     .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
     .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes typing { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+    @keyframes typing { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
     
-    .simulator-controls { display: flex; flex-direction: column; gap: 20px; }
-    .control-card { background: white; border-radius: 16px; padding: 20px; box-shadow: var(--shadow-sm); }
-    .control-card h3 { font-size: 1rem; margin-bottom: 15px; }
-    .scenario-buttons { display: flex; flex-direction: column; gap: 10px; }
-    .scenario-btn { background: var(--gradient-main); color: white; border: none; padding: 14px 18px; border-radius: 12px; font-size: 0.9rem; font-family: 'Prompt', sans-serif; cursor: pointer; text-align: left; transition: all 0.3s; }
-    .scenario-btn:hover { transform: translateX(8px); box-shadow: var(--shadow-md); }
-    .scenario-btn .scenario-title { font-weight: 600; margin-bottom: 4px; }
-    .scenario-btn .scenario-desc { font-size: 0.8rem; opacity: 0.85; }
-    .quick-commands { display: flex; flex-wrap: wrap; gap: 8px; }
-    .quick-cmd { background: var(--bg-light); border: 2px solid #e0e0e0; padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; font-family: 'Prompt', sans-serif; cursor: pointer; transition: all 0.2s; }
-    .quick-cmd:hover { border-color: #764ba2; color: #764ba2; }
+    .sim-controls { display: flex; flex-direction: column; gap: 1rem; }
+    .control-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 1rem; }
+    .control-card h3 { font-size: 0.9rem; margin-bottom: 0.75rem; }
+    .scenario-btn { width: 100%; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 0.75rem; border-radius: 8px; font-size: 0.85rem; cursor: pointer; text-align: left; margin-bottom: 0.5rem; transition: all 0.2s; }
+    .scenario-btn:hover { transform: translateX(5px); }
+    .scenario-btn .title { font-weight: 600; }
+    .scenario-btn .desc { font-size: 0.75rem; opacity: 0.85; }
+    .quick-commands { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .quick-cmd { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); padding: 0.4rem 0.6rem; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
+    .quick-cmd:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
     .quick-cmd.update { border-color: var(--accent-green); color: var(--accent-green); }
-    .quick-cmd.update:hover { background: var(--accent-green); color: white; }
     .quick-cmd.danger { border-color: var(--accent-red); color: var(--accent-red); }
-    .quick-cmd.danger:hover { background: var(--accent-red); color: white; }
-    .sim-status { background: var(--bg-light); border-radius: 12px; padding: 15px; margin-top: 10px; }
-    .sim-status-title { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; font-weight: 500; }
-    .sim-status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .sim-status-item { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 6px 0; }
-    .sim-status-item .label { color: var(--text-muted); }
-    .sim-status-item .value { font-weight: 600; }
+    .sim-status { background: rgba(255,255,255,0.03); border-radius: 6px; padding: 0.75rem; margin-top: 0.5rem; }
+    .sim-status-title { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+    .sim-status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem; font-size: 0.75rem; }
+    .sim-status-item { display: flex; justify-content: space-between; }
     .sim-status-item .value.done { color: var(--accent-green); }
     .sim-status-item .value.pending { color: var(--accent-orange); }
-    .clear-btn { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; cursor: pointer; font-family: 'Prompt', sans-serif; font-weight: 500; margin-top: 15px; }
+    .clear-btn { width: 100%; background: linear-gradient(135deg, var(--accent-pink), var(--accent-red)); color: white; border: none; padding: 0.6rem; border-radius: 6px; margin-top: 0.75rem; cursor: pointer; font-size: 0.8rem; }
     
-    /* Setup */
-    .api-setup { background: white; border-radius: 20px; padding: 25px; margin-bottom: 25px; box-shadow: var(--shadow-sm); }
-    .api-setup h3 { margin-bottom: 15px; }
-    .api-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-    .api-input { flex: 1; padding: 12px 16px; background: var(--bg-light); border: 2px solid #e0e0e0; border-radius: 10px; font-size: 0.9rem; outline: none; font-family: 'Prompt', sans-serif; }
-    .api-input:focus { border-color: #667eea; }
-    .api-btn { background: var(--gradient-success); border: none; padding: 12px 24px; border-radius: 10px; color: white; font-family: 'Prompt', sans-serif; font-weight: 600; cursor: pointer; }
-    .api-status { font-size: 0.85rem; color: var(--text-muted); }
-    .api-status.connected { color: var(--accent-green); }
-    .api-status.error { color: var(--accent-red); }
+    /* Modal */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-overlay.show { display: flex; }
+    .modal { background: var(--bg-card); border-radius: 12px; padding: 1.25rem; width: 90%; max-width: 400px; border: 1px solid var(--border-color); }
+    .modal h2 { font-size: 1rem; margin-bottom: 0.75rem; }
+    .status-indicator { display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem; background: rgba(255,255,255,0.05); border-radius: 5px; margin-bottom: 0.75rem; font-size: 0.75rem; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-red); }
+    .status-dot.connected { background: var(--accent-green); }
+    .form-group { margin-bottom: 0.75rem; }
+    .form-group label { display: block; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem; }
+    .input-wrapper { display: flex; gap: 0.3rem; }
+    .form-group input { flex: 1; padding: 0.5rem 0.75rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 5px; color: white; font-size: 0.8rem; }
+    .toggle-btn { background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 0.5rem; border-radius: 5px; cursor: pointer; }
+    .save-btn { width: 100%; padding: 0.6rem; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); border: none; border-radius: 5px; color: white; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+    .help-box { margin-top: 0.75rem; padding: 0.6rem; background: rgba(255,255,255,0.05); border-radius: 5px; font-size: 0.7rem; color: var(--text-secondary); }
+    .close-btn { width: 100%; margin-top: 0.5rem; padding: 0.4rem; background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
     
     /* Toast */
-    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--gradient-success); color: white; padding: 15px 30px; border-radius: 12px; font-weight: 600; z-index: 9999; opacity: 0; transition: all 0.3s ease; box-shadow: var(--shadow-md); }
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--accent-green); color: white; padding: 0.6rem 1.25rem; border-radius: 6px; font-size: 0.85rem; font-weight: 500; z-index: 9999; opacity: 0; transition: all 0.3s ease; }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     
-    @media (max-width: 768px) { 
-      .header { flex-direction: column; gap: 15px; } 
-      .challenge-banner { flex-direction: column; text-align: center; gap: 20px; } 
-      .main-content { padding: 20px; } 
-      .dashboard-grid { grid-template-columns: 1fr; } 
-    }
+    .footer { text-align: center; padding: 1rem; color: var(--text-secondary); font-size: 0.7rem; }
   </style>
 </head>
 <body>
+  <div class="bg-animation"></div>
+  
   <header class="header">
-    <div class="header-left">
-      <div class="logo">🤖</div>
-      <div>
+    <div class="logo">
+      <div class="logo-icon">🤖</div>
+      <div class="logo-text">
         <h1>UQ Buddy Dashboard</h1>
-        <div class="header-week" id="headerWeek">📅 Week: -</div>
+        <p>Report Champion League</p>
       </div>
     </div>
     <div class="header-right">
-      <div class="live-badge"><span class="live-dot" id="liveDot"></span><span id="liveText">Demo</span></div>
-      <button class="refresh-btn" onclick="refreshData()">🔄 รีเฟรช</button>
+      <div class="week-badge" id="weekBadge">📅 Week: -</div>
+      <span class="data-source demo" id="dataSource">Demo</span>
+      <button class="btn btn-refresh" onclick="loadData()">🔄</button>
+      <button class="btn btn-settings" onclick="openSettings()">⚙️</button>
     </div>
   </header>
 
@@ -248,7 +240,6 @@
     <button class="nav-tab active" onclick="switchTab('dashboard')">📊 Dashboard</button>
     <button class="nav-tab" onclick="switchTab('ranking')">🏆 Ranking</button>
     <button class="nav-tab" onclick="switchTab('simulator')">📱 Simulator</button>
-    <button class="nav-tab" onclick="switchTab('setup')">⚙️ Setup</button>
   </nav>
 
   <main class="main-content">
@@ -257,88 +248,74 @@
       <div class="challenge-banner" id="challengeBanner">
         <div class="challenge-left">
           <h2 id="challengeTitle">🔥 Challenge วันนี้!</h2>
-          <p id="challengeDesc">ทำให้เสร็จก่อน 14:00 รับ Streak!</p>
+          <p id="challengeDesc">ทำให้เสร็จก่อน 14:00</p>
         </div>
-        <div class="challenge-right" id="challengeRight">
-          <div class="time-left" id="timeLeft">--:--:--</div>
+        <div class="challenge-right">
+          <div class="time-display" id="timeDisplay">--:--:--</div>
           <div class="time-label" id="timeLabel">เหลือเวลา</div>
         </div>
       </div>
 
-      <div class="dashboard-grid top-row-3">
-        <div class="motivation-box" id="motivationBox">
-          <div class="motivation-emoji">💪</div>
-          <div class="motivation-text">มาลุยกันเถอะ!</div>
-          <div class="motivation-sub">ทำเสร็จ 0/8 รายการ</div>
-        </div>
-        <div class="streak-card">
-          <div class="streak-fire">🔥</div>
-          <div class="streak-number" id="streakCount">0</div>
-          <div class="streak-label">สัปดาห์ติดต่อกัน</div>
-        </div>
-        <div class="leaderboard-mini">
-          <div class="leaderboard-mini-header">
-            <span class="leaderboard-mini-trophy">🏆</span>
-            <span class="leaderboard-mini-title">เสร็จเร็วที่สุดวันนี้</span>
-          </div>
-          <div id="leaderboardList" class="leaderboard-mini-list"><div class="leaderboard-mini-empty">⏳ รอเชื่อมต่อ API...</div></div>
-        </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="value" id="totalProgress">-</div><div class="label">Progress</div></div>
+        <div class="stat-card"><div class="value" id="streakCount">0</div><div class="label">🔥 Streak</div></div>
+        <div class="stat-card"><div class="value" id="totalFast">0</div><div class="label">⚡ มือไว</div></div>
+        <div class="stat-card"><div class="value" id="totalCarry">0</div><div class="label">🏋️ เดอะแบก</div></div>
       </div>
 
       <div class="dashboard-grid">
+        <!-- MK Card -->
         <div class="card">
-          <div class="card-header">
-            <h2 class="card-title">📊 Media Tracking (MK)</h2>
-            <span class="card-badge warning" id="mtkBadge">-/-</span>
-          </div>
-          <div class="progress-ring-container">
-            <div class="progress-ring">
-              <svg width="140" height="140">
-                <defs><linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#667eea"/><stop offset="100%" style="stop-color:#764ba2"/></linearGradient></defs>
-                <circle class="bg" cx="70" cy="70" r="60"/>
-                <circle class="progress" id="mtkProgress" cx="70" cy="70" r="60"/>
-              </svg>
-              <div class="center-text"><div class="percentage" id="mtkPercent">-</div><div class="label">เสร็จแล้ว</div></div>
+          <div class="card-header">📊 Media Tracking (MK)</div>
+          <div class="card-body">
+            <div class="progress-section">
+              <div class="progress-header"><span>ความคืบหน้า</span><span class="progress-count" id="mtkProgress">0/0</span></div>
+              <div class="progress-bar"><div class="progress-fill mtk" id="mtkProgressBar" style="width:0%"></div></div>
+            </div>
+            <div class="campaign-list" id="mtkCampaigns"></div>
+            
+            <div class="friends-section">
+              <div class="friends-title">💖 UQ Friends <span class="friends-note">(ไม่นับ progress)</span></div>
+              <div id="mtkFriends"></div>
             </div>
           </div>
-          <div class="status-list" id="mtkStatusList"><div style="text-align:center;color:var(--text-muted);padding:20px;">⏳ รอเชื่อมต่อ API...</div></div>
         </div>
 
+        <!-- AW Card -->
         <div class="card">
-          <div class="card-header">
-            <h2 class="card-title">📊 Asean Weekly (AW)</h2>
-            <span class="card-badge warning" id="arpBadge">-/-</span>
-          </div>
-          <div class="progress-ring-container">
-            <div class="progress-ring">
-              <svg width="140" height="140">
-                <circle class="bg" cx="70" cy="70" r="60"/>
-                <circle class="progress" id="arpProgress" cx="70" cy="70" r="60"/>
-              </svg>
-              <div class="center-text"><div class="percentage" id="arpPercent">-</div><div class="label">เสร็จแล้ว</div></div>
+          <div class="card-header">📊 Asean Weekly (AW)</div>
+          <div class="card-body">
+            <div class="progress-section">
+              <div class="progress-header"><span>ความคืบหน้า</span><span class="progress-count" id="arpProgress">0/0</span></div>
+              <div class="progress-bar"><div class="progress-fill arp" id="arpProgressBar" style="width:0%"></div></div>
+            </div>
+            <div class="campaign-list" id="arpCampaigns"></div>
+            
+            <div class="friends-section">
+              <div class="friends-title">💖 UQ Friends <span class="friends-note">(ไม่นับ progress)</span></div>
+              <div id="arpFriends"></div>
             </div>
           </div>
-          <div class="status-list" id="arpStatusList"><div style="text-align:center;color:var(--text-muted);padding:20px;">⏳ รอเชื่อมต่อ API...</div></div>
         </div>
 
+        <!-- Leaderboard -->
         <div class="card">
-          <div class="card-header"><h2 class="card-title">📅 Checklist สัปดาห์นี้</h2></div>
-          <table class="checklist-table">
-            <thead><tr><th>วัน</th><th>เปิด</th><th>Deadline</th><th>เสร็จ</th></tr></thead>
-            <tbody>
-              <tr><td><span class="day-label"><span class="day-icon">🌤️</span> พุธ</span></td><td><span class="check-icon pending" id="wed-open">🟠</span></td><td><span class="check-icon pending" id="wed-deadline">🟠</span></td><td><span class="check-icon pending" id="wed-done">🟠</span></td></tr>
-              <tr><td><span class="day-label"><span class="day-icon">🌅</span> ศุกร์</span></td><td><span class="check-icon pending" id="fri-open">🟠</span></td><td><span class="check-icon pending" id="fri-deadline">🟠</span></td><td><span class="check-icon pending" id="fri-done">🟠</span></td></tr>
-              <tr><td><span class="day-label"><span class="day-icon">☀️</span> จันทร์</span></td><td><span class="check-icon pending" id="mon-open">🟠</span></td><td><span class="check-icon pending" id="mon-deadline">🟠</span></td><td><span class="check-icon pending" id="mon-done">🟠</span></td></tr>
-            </tbody>
-          </table>
+          <div class="card-header">🏆 Leaderboard วันนี้</div>
+          <div class="card-body">
+            <div id="leaderboard"></div>
+          </div>
         </div>
 
+        <!-- Badges -->
         <div class="card">
-          <div class="card-header"><h2 class="card-title">🎖️ Badge Hall of Fame</h2></div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center;">
-            <div style="padding:15px;background:var(--bg-light);border-radius:12px;"><div style="font-size:2rem;">⚡</div><div style="font-size:0.8rem;color:var(--text-muted);">มือไว</div><div style="font-size:1.5rem;font-weight:700;color:#667eea;" id="badgeFast">0</div></div>
-            <div style="padding:15px;background:var(--bg-light);border-radius:12px;"><div style="font-size:2rem;">🔥</div><div style="font-size:0.8rem;color:var(--text-muted);">ไฟแรง</div><div style="font-size:1.5rem;font-weight:700;color:#667eea;" id="badgeEarly">0</div></div>
-            <div style="padding:15px;background:var(--bg-light);border-radius:12px;"><div style="font-size:2rem;">🎯</div><div style="font-size:0.8rem;color:var(--text-muted);">ครบถ้วน</div><div style="font-size:1.5rem;font-weight:700;color:#667eea;" id="badgeComplete">0</div></div>
+          <div class="card-header">🎖️ Badge Hall of Fame</div>
+          <div class="card-body">
+            <div class="badges-grid">
+              <div class="badge-item"><div class="icon">⚡</div><div class="label">มือไว</div><div class="count" id="badgeFast">0</div></div>
+              <div class="badge-item"><div class="icon">🔥</div><div class="label">ไฟแรง</div><div class="count" id="badgeEarly">0</div></div>
+              <div class="badge-item"><div class="icon">🎯</div><div class="label">ครบถ้วน</div><div class="count" id="badgeComplete">0</div></div>
+              <div class="badge-item"><div class="icon">🏋️</div><div class="label">เดอะแบก</div><div class="count" id="badgeCarry">0</div></div>
+            </div>
           </div>
         </div>
       </div>
@@ -347,22 +324,37 @@
     <!-- Ranking Tab -->
     <div id="ranking-tab" class="tab-content">
       <div class="card">
-        <div class="card-header"><h2 class="card-title">🏆 Campaign Ranking (Top 3 Best / Worst)</h2></div>
-        
-        <div class="ranking-tabs">
-          <button class="ranking-tab active" onclick="switchRankingTab('traffic')">🚗 Traffic</button>
-          <button class="ranking-tab" onclick="switchRankingTab('vdo')">🎬 VDO</button>
-          <button class="ranking-tab" onclick="switchRankingTab('awareness')">👁️ Awareness</button>
-        </div>
-
-        <div id="ranking-traffic" class="ranking-content active">
-          <div style="text-align:center;color:var(--text-muted);padding:40px;">⏳ กรุณาเชื่อมต่อ API...</div>
-        </div>
-        <div id="ranking-vdo" class="ranking-content">
-          <div style="text-align:center;color:var(--text-muted);padding:40px;">⏳ กรุณาเชื่อมต่อ API...</div>
-        </div>
-        <div id="ranking-awareness" class="ranking-content">
-          <div style="text-align:center;color:var(--text-muted);padding:40px;">⏳ กรุณาเชื่อมต่อ API...</div>
+        <div class="card-header">📈 Campaign Summary (Top 3 Best / Worst)</div>
+        <div class="card-body">
+          <div class="summary-tabs">
+            <div class="summary-tab active" onclick="switchSummaryTab('traffic')">🚗 Traffic</div>
+            <div class="summary-tab" onclick="switchSummaryTab('vdo')">🎬 VDO</div>
+            <div class="summary-tab" onclick="switchSummaryTab('awareness')">👁️ Awareness</div>
+          </div>
+          
+          <div class="summary-content active" id="sum-traffic">
+            <div class="below-note" id="below-traffic">⚠️ Below Average: 0 campaigns</div>
+            <div class="summary-grid">
+              <div class="summary-section"><h4 class="best">🏆 Top 3 Best (CTR%)</h4><div id="traffic-best"></div></div>
+              <div class="summary-section"><h4 class="worst">⚠️ Top 3 Worst (CTR%)</h4><div id="traffic-worst"></div></div>
+            </div>
+          </div>
+          
+          <div class="summary-content" id="sum-vdo">
+            <div class="below-note" id="below-vdo">⚠️ Below Average: 0 campaigns</div>
+            <div class="summary-grid">
+              <div class="summary-section"><h4 class="best">🏆 Top 3 Best (CV%)</h4><div id="vdo-best"></div></div>
+              <div class="summary-section"><h4 class="worst">⚠️ Top 3 Worst (CV%)</h4><div id="vdo-worst"></div></div>
+            </div>
+          </div>
+          
+          <div class="summary-content" id="sum-awareness">
+            <div class="below-note" id="below-awareness">⚠️ Below Average: 0 campaigns</div>
+            <div class="summary-grid">
+              <div class="summary-section"><h4 class="best">🏆 Top 3 Best (CPM)</h4><div id="awareness-best"></div></div>
+              <div class="summary-section"><h4 class="worst">⚠️ Top 3 Worst (CPM)</h4><div id="awareness-worst"></div></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -383,89 +375,117 @@
             </div>
           </div>
         </div>
-        <div class="simulator-controls">
-          <div class="control-card">
-            <h3>👤 ชื่อของคุณ</h3>
-            <input type="text" class="api-input" id="userNameInput" value="คุณ" onchange="currentUserName=this.value||'คุณ'" style="width:100%">
-          </div>
+        
+        <div class="sim-controls">
           <div class="control-card">
             <h3>🎬 ตัวอย่างการใช้งาน</h3>
-            <div class="scenario-buttons">
-              <button class="scenario-btn" onclick="runScenario('morning')"><div class="scenario-title">☀️ เช้าวันจันทร์</div><div class="scenario-desc">Bot แจ้งเตือนเปิดงาน</div></button>
-              <button class="scenario-btn" onclick="runScenario('update')"><div class="scenario-title">✅ อัปเดตงานเสร็จ</div><div class="scenario-desc">พิมพ์แจ้งว่าทำเสร็จ</div></button>
-              <button class="scenario-btn" onclick="runScenario('alldone')"><div class="scenario-title">🎉 งานเสร็จหมด</div><div class="scenario-desc">ทุกคนอัปเดตครบ!</div></button>
-            </div>
+            <button class="scenario-btn" onclick="runScenario('morning')"><div class="title">☀️ เช้าวันจันทร์</div><div class="desc">Bot แจ้งเตือนเปิดงาน</div></button>
+            <button class="scenario-btn" onclick="runScenario('update')"><div class="title">✅ อัปเดตงานเสร็จ</div><div class="desc">พิมพ์แจ้งว่าทำเสร็จ</div></button>
+            <button class="scenario-btn" onclick="runScenario('alldone')"><div class="title">🎉 งานเสร็จหมด</div><div class="desc">report = all done</div></button>
+            <button class="scenario-btn" onclick="runScenario('friends')"><div class="title">💖 UQ Friends</div><div class="desc">aw neon = done</div></button>
           </div>
+          
           <div class="control-card">
             <h3>⌨️ คำสั่งด่วน</h3>
             <div class="quick-commands">
               <button class="quick-cmd" onclick="sendQuickCmd('report = status')">📊 ดูสถานะ</button>
-              <button class="quick-cmd update" onclick="sendQuickCmd('aw linen = done')">✅ AW Done</button>
-              <button class="quick-cmd update" onclick="sendQuickCmd('mk holiday = done')">✅ MK Done</button>
+              <button class="quick-cmd update" onclick="sendQuickCmd('report = all done')">✅ All Done</button>
+              <button class="quick-cmd" onclick="sendQuickCmd('aw neon = done')">💖 Friends</button>
               <button class="quick-cmd danger" onclick="sendQuickCmd('report = reset')">🔄 Reset</button>
             </div>
-          </div>
-          <div class="control-card">
-            <h3>📋 สถานะ Simulator</h3>
+            
             <div class="sim-status">
-              <div class="sim-status-title">MK</div>
+              <div class="sim-status-title">📋 สถานะ MK</div>
               <div class="sim-status-grid">
-                <div class="sim-status-item"><span class="label">Linen</span><span class="value pending" id="sim-mtk-linen">Pending</span></div>
-                <div class="sim-status-item"><span class="label">Holiday</span><span class="value pending" id="sim-mtk-holiday">Pending</span></div>
-                <div class="sim-status-item"><span class="label">Denim</span><span class="value pending" id="sim-mtk-denim">Pending</span></div>
-                <div class="sim-status-item"><span class="label">Masterpiece</span><span class="value pending" id="sim-mtk-masterpiece">Pending</span></div>
+                <div class="sim-status-item"><span>Linen</span><span class="value pending" id="sim-mtk-linen">Pending</span></div>
+                <div class="sim-status-item"><span>Holiday</span><span class="value pending" id="sim-mtk-holiday">Pending</span></div>
+                <div class="sim-status-item"><span>Denim</span><span class="value pending" id="sim-mtk-denim">Pending</span></div>
+                <div class="sim-status-item"><span>Masterpiece</span><span class="value pending" id="sim-mtk-masterpiece">Pending</span></div>
               </div>
             </div>
+            
             <div class="sim-status">
-              <div class="sim-status-title">AW</div>
+              <div class="sim-status-title">📋 สถานะ AW</div>
               <div class="sim-status-grid">
-                <div class="sim-status-item"><span class="label">Linen</span><span class="value pending" id="sim-arp-linen">Pending</span></div>
-                <div class="sim-status-item"><span class="label">Holiday</span><span class="value pending" id="sim-arp-holiday">Pending</span></div>
-                <div class="sim-status-item"><span class="label">Denim</span><span class="value pending" id="sim-arp-denim">Pending</span></div>
-                <div class="sim-status-item"><span class="label">Masterpiece</span><span class="value pending" id="sim-arp-masterpiece">Pending</span></div>
+                <div class="sim-status-item"><span>Linen</span><span class="value pending" id="sim-arp-linen">Pending</span></div>
+                <div class="sim-status-item"><span>Holiday</span><span class="value pending" id="sim-arp-holiday">Pending</span></div>
+                <div class="sim-status-item"><span>Denim</span><span class="value pending" id="sim-arp-denim">Pending</span></div>
+                <div class="sim-status-item"><span>Masterpiece</span><span class="value pending" id="sim-arp-masterpiece">Pending</span></div>
               </div>
             </div>
+            
+            <div class="sim-status">
+              <div class="sim-status-title">💖 UQ Friends (ไม่นับ progress)</div>
+              <div class="sim-status-grid">
+                <div class="sim-status-item"><span>Neon</span><span class="value pending" id="sim-friends-neon">Pending</span></div>
+                <div class="sim-status-item"><span>ModernDuck</span><span class="value pending" id="sim-friends-mdg">Pending</span></div>
+              </div>
+            </div>
+            
             <button class="clear-btn" onclick="clearChat()">🗑️ ล้างแชท & รีเซ็ต</button>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Setup Tab -->
-    <div id="setup-tab" class="tab-content">
-      <div class="api-setup">
-        <h3>🔗 เชื่อมต่อ API</h3>
-        <div class="api-input-group">
-          <input type="password" class="api-input" id="apiUrl" placeholder="วาง URL ของ Web App..." autocomplete="off">
-          <button class="api-btn" onclick="connectApi()">เชื่อมต่อ</button>
-        </div>
-        <p class="api-status" id="apiStatus">ยังไม่ได้เชื่อมต่อ (ใช้ Demo Mode)</p>
-        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:10px;">🔒 URL จะถูกเก็บในเครื่องคุณเท่านั้น ไม่ส่งไปที่ไหน</p>
-      </div>
-      <div class="card">
-        <div class="card-header"><h2 class="card-title">📝 API Endpoint ที่ต้อง Deploy</h2></div>
-        <div style="color:var(--text-muted);line-height:1.8;font-size:0.9rem;">
-          <p><strong>URL Format:</strong> <code>?action=dashboard</code></p>
-          <br>
-          <p><strong>Sheets ที่ใช้:</strong></p>
-          <ul style="margin-left:20px;">
-            <li>MTK Tracker (Campaign, MTK Status, ARP Status, MTK Done By, MTK Done Time, ARP Done By, ARP Done Time)</li>
-            <li>Weekly_Log (report_week)</li>
-            <li>Summary (section, rank, campaign, result)</li>
-            <li>Badges (Name, ⚡ มือไว, 🔥 ไฟแรง, 🎯 ครบถ้วน)</li>
-          </ul>
-        </div>
-      </div>
-    </div>
   </main>
+
+  <footer class="footer">🤖 UQ Buddy Dashboard v5.0 | Last updated: <span id="lastUpdate">-</span></footer>
 
   <div class="toast" id="toast">✅ Copied!</div>
 
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+      <h2>⚙️ ตั้งค่าการเชื่อมต่อ</h2>
+      <div class="status-indicator"><div class="status-dot" id="statusDot"></div><span id="statusText">ยังไม่ได้เชื่อมต่อ</span></div>
+      <div class="form-group">
+        <label>Google Apps Script Web App URL</label>
+        <div class="input-wrapper">
+          <input type="password" id="apiUrlInput" placeholder="วาง URL ที่นี่..." autocomplete="off">
+          <button class="toggle-btn" onclick="toggleApi()" id="toggleBtn">👁️</button>
+        </div>
+      </div>
+      <button class="save-btn" onclick="saveSettings()">💾 บันทึกและเชื่อมต่อ</button>
+      <div class="help-box">🔒 URL จะถูกเก็บในเครื่องคุณเท่านั้น</div>
+      <button class="close-btn" onclick="closeSettings()">ปิด</button>
+    </div>
+  </div>
+
   <script>
 // === STATE ===
-let apiUrl = localStorage.getItem('uqBuddyApiUrl') || '';
+let API_URL = localStorage.getItem('uq_api_url') || '';
 let isConnected = false;
-let currentUserName = 'คุณ';
+let isUsingDemo = true;
+
+// UQ Friends state (manual toggle)
+let friendsStatus = {
+  mtk: { neon: false, mdg: false },
+  arp: { neon: false, mdg: false }
+};
+
+// === HELPERS ===
+function getUserTitle(f) {
+  if (f >= 10) return '👑ราชารีพอร์ท';
+  if (f >= 5) return '💎เพชรรีพอร์ท';
+  if (f >= 3) return '🌟ดาวรุ่งรีพอร์ท';
+  return '';
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+function copyCampaign(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied');
+    btn.textContent = '✅';
+    showToast('✅ Copy แล้ว!');
+    setTimeout(() => { btn.classList.remove('copied'); btn.textContent = '📋'; }, 2000);
+  });
+}
 
 // === TABS ===
 function switchTab(name) {
@@ -475,37 +495,11 @@ function switchTab(name) {
   event.target.classList.add('active');
 }
 
-function switchRankingTab(name) {
-  document.querySelectorAll('.ranking-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.ranking-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('ranking-' + name).classList.add('active');
+function switchSummaryTab(name) {
+  document.querySelectorAll('.summary-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.summary-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('sum-' + name).classList.add('active');
   event.target.classList.add('active');
-}
-
-// === TOAST ===
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2000);
-}
-
-// === COPY ===
-function copyCampaign(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    btn.classList.add('copied');
-    btn.textContent = '✅ Copied!';
-    showToast('✅ Copy ชื่อแคมเปญแล้ว!');
-    setTimeout(() => { btn.classList.remove('copied'); btn.textContent = '📋 Copy'; }, 2000);
-  });
-}
-
-// === TITLE ===
-function getUserTitle(f) {
-  if (f >= 10) return ' 👑ราชารีพอร์ท';
-  if (f >= 5) return ' 💎เพชรรีพอร์ท';
-  if (f >= 3) return ' 🌟ดาวรุ่งรีพอร์ท';
-  return '';
 }
 
 // === CHALLENGE BANNER ===
@@ -515,224 +509,245 @@ function updateChallenge() {
   const banner = document.getElementById('challengeBanner');
   const title = document.getElementById('challengeTitle');
   const desc = document.getElementById('challengeDesc');
-  const right = document.getElementById('challengeRight');
+  const display = document.getElementById('timeDisplay');
+  const label = document.getElementById('timeLabel');
 
   if (day === 5 || day === 1) {
     const dayName = day === 5 ? 'ศุกร์' : 'จันทร์';
     const deadline = new Date(); deadline.setHours(14, 0, 0, 0);
     
     if (now >= deadline) {
-      banner.className = 'challenge-banner completed';
-      title.innerHTML = '🎉 จบ Challenge!';
+      banner.classList.add('next');
+      title.textContent = '🎉 จบ Challenge!';
       desc.textContent = 'เจอกัน Challenge ถัดไป!';
-      right.innerHTML = '<div class="next-day">✨</div><div class="next-date">เก่งมาก!</div>';
+      display.textContent = '✨';
+      label.textContent = 'เก่งมาก!';
     } else {
-      banner.className = 'challenge-banner';
-      title.innerHTML = '🔥 Challenge วัน' + dayName + '!';
-      desc.textContent = 'ทำให้เสร็จก่อน 14:00 รับ Streak!';
+      banner.classList.remove('next');
+      title.textContent = '🔥 Challenge วัน' + dayName + '!';
+      desc.textContent = 'ทำให้เสร็จก่อน 14:00';
       const diff = deadline - now;
       const h = Math.floor(diff / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
       const s = Math.floor((diff % 60000) / 1000);
-      right.innerHTML = '<div class="time-left">' + [h,m,s].map(n => String(n).padStart(2,'0')).join(':') + '</div><div class="time-label">เหลือเวลา</div>';
-      if (h === 0 && m < 30) banner.style.background = 'linear-gradient(135deg, #ff4757 0%, #ff6b81 100%)';
+      display.textContent = [h,m,s].map(n => String(n).padStart(2,'0')).join(':');
+      label.textContent = 'เหลือเวลา';
     }
   } else {
-    banner.className = 'challenge-banner next-game';
-    title.innerHTML = '🎮 Next Challenge';
+    banner.classList.add('next');
+    title.textContent = '🎮 Next Challenge';
     const daysToFri = (5 - day + 7) % 7 || 7;
     const daysToMon = (1 - day + 7) % 7 || 7;
     const nextDays = Math.min(daysToFri, daysToMon);
-    const nextDate = new Date(now); nextDate.setDate(now.getDate() + nextDays);
-    const nextDayName = nextDate.getDay() === 5 ? 'ศุกร์' : 'จันทร์';
+    const nextDayName = nextDays === daysToFri ? 'ศุกร์' : 'จันทร์';
     desc.textContent = 'เตรียมตัวให้พร้อม!';
-    right.innerHTML = '<div class="next-day">วัน' + nextDayName + '</div><div class="next-date">' + nextDate.toLocaleDateString('th-TH',{day:'numeric',month:'short'}) + ' (อีก ' + nextDays + ' วัน)</div>';
+    display.textContent = nextDays + ' วัน';
+    label.textContent = 'ถึงวัน' + nextDayName;
   }
 }
 setInterval(updateChallenge, 1000);
 updateChallenge();
 
-// === API ===
-if (apiUrl) document.getElementById('apiUrl').value = apiUrl;
-
-function connectApi() {
-  apiUrl = document.getElementById('apiUrl').value.trim();
-  if (apiUrl) { localStorage.setItem('uqBuddyApiUrl', apiUrl); refreshData(); }
+// === SETTINGS ===
+function openSettings() { document.getElementById('settingsModal').classList.add('show'); document.getElementById('apiUrlInput').value = API_URL; updateStatus(); }
+function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
+function toggleApi() {
+  const i = document.getElementById('apiUrlInput');
+  const b = document.getElementById('toggleBtn');
+  if (i.type === 'password') { i.type = 'text'; b.textContent = '🔒'; }
+  else { i.type = 'password'; b.textContent = '👁️'; }
+}
+function saveSettings() {
+  const url = document.getElementById('apiUrlInput').value.trim();
+  if (!url) { alert('กรุณาใส่ URL'); return; }
+  API_URL = url;
+  localStorage.setItem('uq_api_url', url);
+  closeSettings();
+  loadData();
+}
+function updateStatus() {
+  const dot = document.getElementById('statusDot');
+  const text = document.getElementById('statusText');
+  if (isConnected) { dot.classList.add('connected'); text.textContent = '✅ เชื่อมต่อสำเร็จ'; }
+  else if (API_URL) { dot.classList.remove('connected'); text.textContent = '⏳ รอการเชื่อมต่อ...'; }
+  else { dot.classList.remove('connected'); text.textContent = '❌ ยังไม่ได้ตั้งค่า URL'; }
+}
+function updateDataSourceBadge() {
+  const badge = document.getElementById('dataSource');
+  if (isUsingDemo) { badge.className = 'data-source demo'; badge.textContent = 'Demo'; }
+  else { badge.className = 'data-source live'; badge.textContent = 'Live'; }
 }
 
-async function refreshData() {
-  updateLiveStatus();
+// === TOGGLE FRIENDS (sync with Sheet) ===
+async function toggleFriend(sys, name) {
+  const newStatus = !friendsStatus[sys][name];
+  friendsStatus[sys][name] = newStatus;
+  renderFriends();
   
-  if (!apiUrl) { 
-    document.getElementById('apiStatus').textContent = '⚠️ กรุณาเชื่อมต่อ API ในแท็บ Setup';
-    document.getElementById('apiStatus').className = 'api-status error';
-    loadDemo();
-    return; 
+  // Sync with Google Sheet via API
+  if (API_URL) {
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'updateFriend',
+          system: sys,
+          friend: name,
+          status: newStatus ? 'Done' : 'Pending'
+        })
+      });
+      const result = await response.json();
+      if (result.success) {
+        showToast(newStatus ? '✅ บันทึก ' + (name === 'mdg' ? 'ModernDuck' : 'Neon') + ' แล้ว!' : '🔄 เปลี่ยนเป็น Pending แล้ว!');
+      }
+    } catch (e) {
+      console.error('Failed to sync friend status:', e);
+      showToast('⚠️ บันทึกไม่สำเร็จ (offline mode)');
+    }
   }
-  
+}
+
+function renderFriends() {
+  ['mtk', 'arp'].forEach(sys => {
+    const container = document.getElementById(sys + 'Friends');
+    container.innerHTML = Object.entries(friendsStatus[sys]).map(([name, done]) => {
+      const displayName = name === 'mdg' ? 'ModernDuck' : 'Neon';
+      return `<div class="friend-item ${done ? 'done' : ''}">
+        <span>${done ? '🟢' : '🟠'} ${displayName}</span>
+        <input type="checkbox" class="friend-checkbox" ${done ? 'checked' : ''} onchange="toggleFriend('${sys}', '${name}')">
+      </div>`;
+    }).join('');
+  });
+}
+
+// === LOAD DATA ===
+async function loadData() {
+  if (!API_URL) { isUsingDemo = true; isConnected = false; updateDataSourceBadge(); updateStatus(); loadDemo(); return; }
   try {
-    document.getElementById('apiStatus').textContent = '🔄 กำลังโหลด...';
-    const res = await fetch(apiUrl + '?action=dashboard');
+    const res = await fetch(`${API_URL}?action=dashboard`);
+    if (!res.ok) throw new Error('API Error');
     const data = await res.json();
-    isConnected = true;
-    updateLiveStatus();
-    renderDashboard(data);
-    document.getElementById('apiStatus').textContent = '✅ เชื่อมต่อสำเร็จ (อัปเดตล่าสุด: ' + new Date().toLocaleTimeString('th-TH') + ')';
-    document.getElementById('apiStatus').className = 'api-status connected';
+    isConnected = true; isUsingDemo = false; updateDataSourceBadge(); updateStatus();
+    render(data);
   } catch (e) {
-    isConnected = false;
-    updateLiveStatus();
-    document.getElementById('apiStatus').textContent = '❌ เชื่อมต่อไม่ได้: ' + e.message;
-    document.getElementById('apiStatus').className = 'api-status error';
+    console.error(e);
+    isConnected = false; isUsingDemo = true; updateDataSourceBadge(); updateStatus();
     loadDemo();
   }
 }
 
-function updateLiveStatus() {
-  const dot = document.getElementById('liveDot');
-  const text = document.getElementById('liveText');
-  if (isConnected) {
-    dot.classList.remove('demo');
-    text.textContent = 'Live';
-  } else {
-    dot.classList.add('demo');
-    text.textContent = 'Demo';
-  }
-}
-
-// === DEMO DATA ===
 function loadDemo() {
-  renderDashboard({
+  render({
     reportWeek: 'Demo Mode',
     mtk: { progress: { done: 3, total: 4 }, campaigns: [{ name: 'Linen', status: 'Done' }, { name: 'Holiday', status: 'Done' }, { name: 'Denim', status: 'Done' }, { name: 'Masterpiece', status: 'Pending' }] },
     arp: { progress: { done: 2, total: 4 }, campaigns: [{ name: 'Linen', status: 'Done' }, { name: 'Holiday', status: 'Done' }, { name: 'Denim', status: 'Pending' }, { name: 'Masterpiece', status: 'Pending' }] },
-    leaderboard: [{ name: 'หอกอ', time: '11:23', count: 3, badges: { fast: 3, early: 2, complete: 1 } }, { name: 'พี่เบนซ์', time: '11:45', count: 1, badges: { fast: 1, early: 1, complete: 0 } }],
-    badges: { totalFast: 4, totalEarly: 3, totalComplete: 1 },
+    leaderboard: [{ name: 'หอกอ', time: '11:23', count: 5, badges: { fast: 3, early: 2, complete: 1, carry: 2 } }, { name: 'พี่เบนซ์', time: '11:45', count: 2, badges: { fast: 1, early: 1, complete: 0, carry: 0 } }],
+    badges: { totalFast: 4, totalEarly: 3, totalComplete: 1, totalCarry: 2 },
     streak: 3,
-    earlyBirds: ['หอกอ', 'พี่เบนซ์'],
+    belowStats: { traffic: 2, vdo: 3, awareness: 1 },
     summary: {
       traffic: {
-        best: [{ rank: 1, campaign: 'Uniqlo_LO_Meta_[POST 3]_SNS_Traffic_191225-221225_CPC_1-4_129000_2025122892', result: 'CTR 2.35%' }, { rank: 2, campaign: 'Uniqlo_Holiday_Meta_[SNS #6 Holiday Gift shopping]_SNS_Traffic_221225-311225', result: 'CTR 1.59%' }, { rank: 3, campaign: 'Uniqlo_Holiday_Meta_[SNS #7 Styling for X mas]_SNS_Traffic_231225-311225', result: 'CTR 1.39%' }],
-        worst: [{ rank: 1, campaign: 'Uniqlo_UT_IG_[Post 6: Jason Polan UT]_SNS_Traffic_221225-281225_CPC', result: 'CTR 0.91%' }, { rank: 2, campaign: 'Uniqlo_Holiday_Meta_[SNS #5 Body analysis]_SNS_Traffic_221225-311225', result: 'CTR 1.34%' }, { rank: 3, campaign: 'Uniqlo_UT_FB_[Post 6: Jason Polan UT]_SNS_Traffic_221225-281225', result: 'CTR 1.37%' }]
+        best: [{ rank: 1, campaign: 'Uniqlo_LO_Meta_[POST 3]_SNS_Traffic_191225-221225_CPC_1-4_129000_2025122892', result: 'CTR 2.35%' }, { rank: 2, campaign: 'Uniqlo_Holiday_Meta_[SNS #6]_SNS_Traffic_221225-311225', result: 'CTR 1.59%' }, { rank: 3, campaign: 'Uniqlo_Holiday_Meta_[SNS #7]_SNS_Traffic_231225-311225', result: 'CTR 1.39%' }],
+        worst: [{ rank: 1, campaign: 'Uniqlo_UT_IG_[Post 6]_SNS_Traffic_221225-281225', result: 'CTR 0.91%' }, { rank: 2, campaign: 'Uniqlo_Holiday_Meta_[SNS #5]_SNS_Traffic_221225-311225', result: 'CTR 1.34%' }, { rank: 3, campaign: 'Uniqlo_UT_FB_[Post 6]_SNS_Traffic_221225-281225', result: 'CTR 1.37%' }]
       },
       vdo: {
-        best: [{ rank: 1, campaign: 'Uniqlo_Special Collection_IG_[26SS JWA early drop]_Instagram Reel_VDO Views', result: 'CV 20.74%' }, { rank: 2, campaign: 'Uniqlo_Special Collection_IG_[26SS CPJ Pleated Wide]_SNS_VDO Views', result: 'CV 17.09%' }, { rank: 3, campaign: 'Uniqlo_Masterpiece_IG_[25SS Fleece Jacket]_Instagram Post_VDO Views', result: 'CV 10.86%' }],
-        worst: [{ rank: 1, campaign: 'Uniqlo_Sweat 26SS_TT_[KOL - Icepariss]_KOL boost_VDO Views', result: 'CV 0.52%' }, { rank: 2, campaign: 'Uniqlo_Sweat 26SS_TT_[KOL - gybdd]_KOL boost_VDO Views', result: 'CV 0.72%' }, { rank: 3, campaign: 'Uniqlo_Holiday_TT_[bowlingfreckled]_KOL boost_VDO Views', result: 'CV 1.16%' }]
+        best: [{ rank: 1, campaign: 'Uniqlo_Special Collection_IG_[26SS JWA]_Reel_VDO Views', result: 'CV 20.74%' }, { rank: 2, campaign: 'Uniqlo_Special Collection_IG_[26SS CPJ]_SNS_VDO Views', result: 'CV 17.09%' }, { rank: 3, campaign: 'Uniqlo_Masterpiece_IG_[25SS Fleece]_Post_VDO Views', result: 'CV 10.86%' }],
+        worst: [{ rank: 1, campaign: 'Uniqlo_Sweat 26SS_TT_[KOL Icepariss]_VDO Views', result: 'CV 0.52%' }, { rank: 2, campaign: 'Uniqlo_Sweat 26SS_TT_[KOL gybdd]_VDO Views', result: 'CV 0.72%' }, { rank: 3, campaign: 'Uniqlo_Holiday_TT_[bowlingfreckled]_VDO Views', result: 'CV 1.16%' }]
       },
       awareness: {
-        best: [{ rank: 1, campaign: 'Uniqlo_Special Collection_FB_[26SS JWA early drop]_SNS_Awareness', result: 'CPM 8.54' }, { rank: 2, campaign: 'Uniqlo_New items_Meta_[UQ New items - Dec Post 4]_SNS_Awareness', result: 'CPM 8.82' }, { rank: 3, campaign: 'Uniqlo_Special Collection_IG_[26SS JWA]_Instagram Post_Awareness', result: 'CPM 8.83' }],
-        worst: [{ rank: 1, campaign: 'Uniqlo_Sustainability_Meta_[Post 2 HT donation]_SNS_Awareness', result: 'CPM 11.51' }, { rank: 2, campaign: 'Uniqlo_LO_Meta_[POST 3]_SNS_Awareness_231225-251225', result: 'CPM 10.82' }, { rank: 3, campaign: 'Uniqlo_Special Collection_IG_[26SS JWA]_Awareness', result: 'CPM 8.83' }]
+        best: [{ rank: 1, campaign: 'Uniqlo_Special Collection_FB_[26SS JWA]_Awareness', result: 'CPM 8.54' }, { rank: 2, campaign: 'Uniqlo_New items_Meta_[Dec Post 4]_Awareness', result: 'CPM 8.82' }, { rank: 3, campaign: 'Uniqlo_Special Collection_IG_[26SS JWA]_Awareness', result: 'CPM 8.83' }],
+        worst: [{ rank: 1, campaign: 'Uniqlo_Sustainability_Meta_[Post 2 HT]_Awareness', result: 'CPM 11.51' }, { rank: 2, campaign: 'Uniqlo_LO_Meta_[POST 3]_Awareness', result: 'CPM 10.82' }, { rank: 3, campaign: 'Uniqlo_Special Collection_IG_[JWA IG]_Awareness', result: 'CPM 8.83' }]
       }
     }
   });
 }
 
-// === RENDER ===
-function renderDashboard(data) {
-  // Week
-  document.getElementById('headerWeek').textContent = '📅 Week: ' + (data.reportWeek || '-');
+function render(data) {
+  document.getElementById('weekBadge').textContent = '📅 ' + (data.reportWeek || '-');
   
-  // Progress Cards
-  renderProgressCard('mtk', data.mtk);
-  renderProgressCard('arp', data.arp);
+  // Progress
+  ['mtk', 'arp'].forEach(sys => {
+    const { progress, campaigns } = data[sys];
+    const pct = progress.total > 0 ? (progress.done / progress.total * 100) : 0;
+    document.getElementById(sys + 'Progress').textContent = progress.done + '/' + progress.total;
+    document.getElementById(sys + 'ProgressBar').style.width = pct + '%';
+    document.getElementById(sys + 'Campaigns').innerHTML = campaigns.map(c => 
+      `<div class="campaign-item ${c.status.toLowerCase()}"><span>${c.name}</span><span class="campaign-status ${c.status.toLowerCase()}">${c.status === 'Done' ? '🟢 Done' : '🟠 Pending'}</span></div>`
+    ).join('');
+  });
   
-  // Motivation
+  // ✅ Load Friends status from API
+  if (data.friends) {
+    friendsStatus = {
+      mtk: { 
+        neon: data.friends.mtk?.neon === 'Done', 
+        mdg: data.friends.mtk?.mdg === 'Done' 
+      },
+      arp: { 
+        neon: data.friends.arp?.neon === 'Done', 
+        mdg: data.friends.arp?.mdg === 'Done' 
+      }
+    };
+  }
+  renderFriends();
+  
+  // Stats
   const totalDone = data.mtk.progress.done + data.arp.progress.done;
   const totalAll = data.mtk.progress.total + data.arp.progress.total;
-  updateMotivation(totalDone, totalAll);
-  
-  // Streak
+  document.getElementById('totalProgress').textContent = Math.round(totalDone/totalAll*100) + '%';
   document.getElementById('streakCount').textContent = data.streak || 0;
+  document.getElementById('totalFast').textContent = data.badges?.totalFast || 0;
+  document.getElementById('totalCarry').textContent = data.badges?.totalCarry || 0;
   
   // Leaderboard
-  renderLeaderboard(data.leaderboard);
+  const medals = ['🥇', '🥈', '🥉'];
+  document.getElementById('leaderboard').innerHTML = data.leaderboard?.length ? data.leaderboard.slice(0, 5).map((u, i) => {
+    const title = getUserTitle(u.badges?.fast || 0);
+    const badges = [];
+    if (u.badges?.fast) badges.push('⚡' + u.badges.fast);
+    if (u.badges?.early) badges.push('🔥' + u.badges.early);
+    if (u.badges?.carry) badges.push('🏋️' + u.badges.carry);
+    return `<div class="leaderboard-item ${i === 0 ? 'gold' : ''}"><div class="rank-badge r${Math.min(i+1,3)}">${medals[i] || (i+1)}</div><div class="user-info"><div class="user-name">${u.name}${title ? '<span class="user-title">' + title + '</span>' : ''}</div><div class="user-time">⏰ ${u.time} น. • ${u.count} รายการ</div></div><div>${badges.map(b => '<span class="badge-count">' + b + '</span>').join('')}</div></div>`;
+  }).join('') : '<div style="color:var(--text-secondary);text-align:center;padding:1rem;">ยังไม่มีข้อมูล</div>';
   
   // Badges
   document.getElementById('badgeFast').textContent = data.badges?.totalFast || 0;
   document.getElementById('badgeEarly').textContent = data.badges?.totalEarly || 0;
   document.getElementById('badgeComplete').textContent = data.badges?.totalComplete || 0;
+  document.getElementById('badgeCarry').textContent = data.badges?.totalCarry || 0;
   
-  // Ranking
+  // Below Stats
+  if (data.belowStats) {
+    document.getElementById('below-traffic').textContent = '⚠️ Below Average: ' + data.belowStats.traffic + ' campaigns' + (data.belowStats.traffic === 0 ? ' (นับรวมทั้งหมด)' : '');
+    document.getElementById('below-vdo').textContent = '⚠️ Below Average: ' + data.belowStats.vdo + ' campaigns' + (data.belowStats.vdo === 0 ? ' (นับรวมทั้งหมด)' : '');
+    document.getElementById('below-awareness').textContent = '⚠️ Below Average: ' + data.belowStats.awareness + ' campaigns' + (data.belowStats.awareness === 0 ? ' (นับรวมทั้งหมด)' : '');
+  }
+  
+  // Summary
   if (data.summary) {
-    renderRanking('traffic', 'CTR%', data.summary.traffic);
-    renderRanking('vdo', 'CV%', data.summary.vdo);
-    renderRanking('awareness', 'CPM', data.summary.awareness);
-  }
-}
-
-function renderProgressCard(sys, data) {
-  const { progress, campaigns } = data;
-  const done = progress.done;
-  const total = progress.total;
-  const pct = total > 0 ? (done / total) * 100 : 0;
-  
-  document.getElementById(sys + 'Badge').textContent = done + '/' + total;
-  document.getElementById(sys + 'Badge').className = 'card-badge ' + (done === total ? 'success' : 'warning');
-  document.getElementById(sys + 'Percent').textContent = Math.round(pct) + '%';
-  document.getElementById(sys + 'Progress').style.strokeDashoffset = 377 - (pct / 100) * 377;
-  
-  document.getElementById(sys + 'StatusList').innerHTML = campaigns.map(c => {
-    const isDone = c.status === 'Done';
-    return '<div class="status-item ' + (isDone ? 'done' : 'pending') + '"><div class="status-item-left"><span class="status-icon">' + (isDone ? '✅' : '🟠') + '</span><span class="status-name">' + c.name + '</span></div><span class="status-value ' + (isDone ? 'done' : 'pending') + '">' + c.status + '</span></div>';
-  }).join('');
-}
-
-function renderLeaderboard(leaderboard) {
-  const list = document.getElementById('leaderboardList');
-  if (!leaderboard || leaderboard.length === 0) {
-    list.innerHTML = '<div class="leaderboard-mini-empty">🎯 มาเป็นคนแรก!</div>';
-    return;
-  }
-  const ranks = ['gold', 'silver', 'bronze'];
-  const medals = ['🥇', '🥈', '🥉'];
-  list.innerHTML = leaderboard.slice(0, 3).map((u, i) => {
-    const title = getUserTitle(u.badges?.fast || 0);
-    return '<div class="leaderboard-mini-item' + (i === 0 ? ' first' : '') + '"><span class="leaderboard-mini-rank ' + (ranks[i] || '') + '">' + medals[i] + '</span><span class="leaderboard-mini-name">' + u.name + title + '</span><span class="leaderboard-mini-time">' + u.time + '</span></div>';
-  }).join('');
-}
-
-function renderRanking(type, metric, data) {
-  const container = document.getElementById('ranking-' + type);
-  if (!data) { container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:40px;">ไม่มีข้อมูล</div>'; return; }
-  
-  const bestMedals = ['🥇', '🥈', '🥉'];
-  let html = '';
-  
-  // BEST
-  html += '<div class="ranking-section"><div class="ranking-title">🟢 BEST (' + metric + ')</div><div class="ranking-list">';
-  if (data.best && data.best.length > 0) {
-    data.best.slice(0, 3).forEach((item, i) => {
-      const id = type + '-best-' + i;
-      html += '<div class="ranking-item best"><div class="ranking-item-header"><div class="ranking-item-left"><span class="ranking-star">' + bestMedals[i] + '</span></div><span class="ranking-value best">' + item.result + '</span></div><div class="ranking-campaign">' + item.campaign + '</div><button class="copy-btn" id="' + id + '" onclick="copyCampaign(\'' + item.campaign.replace(/'/g, "\\'") + '\', this)">📋 Copy</button></div>';
+    ['traffic', 'vdo', 'awareness'].forEach(type => {
+      const s = data.summary[type];
+      if (s) {
+        document.getElementById(type + '-best').innerHTML = (s.best || []).slice(0, 3).map(item => 
+          `<div class="summary-item best-item"><div class="summary-item-header"><span class="rank r${item.rank}">#${item.rank}</span><span class="result">${item.result}</span></div><div class="campaign-full">${item.campaign}</div><button class="copy-btn" onclick="copyCampaign('${item.campaign.replace(/'/g, "\\'")}', this)">📋</button></div>`
+        ).join('') || '<div style="color:var(--text-secondary);">ไม่มีข้อมูล</div>';
+        
+        document.getElementById(type + '-worst').innerHTML = (s.worst || []).slice(0, 3).map(item => 
+          `<div class="summary-item worst-item"><div class="summary-item-header"><span class="rank r${item.rank}">#${item.rank}</span><span class="result">${item.result}</span></div><div class="campaign-full">${item.campaign}</div><button class="copy-btn" onclick="copyCampaign('${item.campaign.replace(/'/g, "\\'")}', this)">📋</button></div>`
+        ).join('') || '<div style="color:var(--text-secondary);">ไม่มีข้อมูล</div>';
+      }
     });
-  } else { html += '<div style="color:var(--text-muted);padding:10px;">ไม่มีข้อมูล</div>'; }
-  html += '</div></div>';
+  }
   
-  // WORST
-  html += '<div class="ranking-section"><div class="ranking-title">🔴 WORST (' + metric + ')</div><div class="ranking-list">';
-  if (data.worst && data.worst.length > 0) {
-    data.worst.slice(0, 3).forEach((item, i) => {
-      const id = type + '-worst-' + i;
-      html += '<div class="ranking-item worst"><div class="ranking-item-header"><div class="ranking-item-left"><span class="ranking-star">#' + (i+1) + '</span></div><span class="ranking-value worst">' + item.result + '</span></div><div class="ranking-campaign">' + item.campaign + '</div><button class="copy-btn" id="' + id + '" onclick="copyCampaign(\'' + item.campaign.replace(/'/g, "\\'") + '\', this)">📋 Copy</button></div>';
-    });
-  } else { html += '<div style="color:var(--text-muted);padding:10px;">ไม่มีข้อมูล</div>'; }
-  html += '</div></div>';
-  
-  container.innerHTML = html;
-}
-
-function updateMotivation(done, total) {
-  const box = document.getElementById('motivationBox');
-  let emoji = '💪', text = 'มาลุยกันเถอะ!';
-  if (done === total) { emoji = '🎉'; text = 'เสร็จหมดแล้ว!'; box.style.background = 'linear-gradient(135deg, #00b894 0%, #55efc4 100%)'; }
-  else if (done >= total * 0.75) { emoji = '🔥'; text = 'ใกล้แล้ว! อีกนิดเดียว!'; }
-  else if (done >= total * 0.5) { emoji = '💪'; text = 'ผ่านครึ่งทางแล้ว!'; }
-  box.innerHTML = '<div class="motivation-emoji">' + emoji + '</div><div class="motivation-text">' + text + '</div><div class="motivation-sub">ทำเสร็จ ' + done + '/' + total + ' รายการ</div>';
+  document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('th-TH');
 }
 
 // === SIMULATOR ===
 let mtkStatus = { linen: 'pending', holiday: 'pending', denim: 'pending', masterpiece: 'pending' };
 let arpStatus = { linen: 'pending', holiday: 'pending', denim: 'pending', masterpiece: 'pending' };
+let simFriendsStatus = { neon: 'pending', mdg: 'pending' };
+let currentUserName = 'คุณ';
 
 function countDone(o) { return Object.values(o).filter(s => s === 'done').length; }
 function isAllDone() { return countDone(mtkStatus) === 4 && countDone(arpStatus) === 4; }
@@ -749,11 +764,13 @@ function getFullStatus() {
 function updateSimStatus() {
   Object.entries(mtkStatus).forEach(([n, s]) => { const el = document.getElementById('sim-mtk-' + n); if (el) { el.textContent = s === 'done' ? 'Done' : 'Pending'; el.className = 'value ' + s; } });
   Object.entries(arpStatus).forEach(([n, s]) => { const el = document.getElementById('sim-arp-' + n); if (el) { el.textContent = s === 'done' ? 'Done' : 'Pending'; el.className = 'value ' + s; } });
+  Object.entries(simFriendsStatus).forEach(([n, s]) => { const el = document.getElementById('sim-friends-' + n); if (el) { el.textContent = s === 'done' ? 'Done' : 'Pending'; el.className = 'value ' + s; } });
 }
 
 function resetSim() {
   mtkStatus = { linen: 'pending', holiday: 'pending', denim: 'pending', masterpiece: 'pending' };
   arpStatus = { linen: 'pending', holiday: 'pending', denim: 'pending', masterpiece: 'pending' };
+  simFriendsStatus = { neon: 'pending', mdg: 'pending' };
   updateSimStatus();
 }
 
@@ -780,9 +797,32 @@ function hideTyping() { const t = document.getElementById('typing'); if (t) t.re
 
 function processCmd(text) {
   const lower = text.toLowerCase().trim();
+  
+  // report = status
   if (lower === 'report = status') return 'สถานะล่าสุด 👇\n\n' + getFullStatus();
+  
+  // report = reset
   if (lower === 'report = reset') { resetSim(); return '🔄 รีเซ็ตเรียบร้อย ✨'; }
+  
+  // report = all done (ใหม่!)
+  if (lower === 'report = all done') {
+    mtkStatus = { linen: 'done', holiday: 'done', denim: 'done', masterpiece: 'done' };
+    arpStatus = { linen: 'done', holiday: 'done', denim: 'done', masterpiece: 'done' };
+    updateSimStatus();
+    return '✅ อัปเดตทั้งหมดเป็น Done แล้ว!\n\n🎉🎉🎉 เสร็จหมดแล้ว! 👕🙂\n\n' + getFullStatus();
+  }
+  
+  // UQ Friends: aw neon = done / aw mdg = done / mk neon = done / mk mdg = done
+  const friendsMatch = lower.match(/(mk|aw)\s+(neon|mdg)\s*=\s*done/);
+  if (friendsMatch) {
+    const friendName = friendsMatch[2];
+    simFriendsStatus[friendName] = 'done';
+    updateSimStatus();
+    const displayName = friendName === 'mdg' ? 'ModernDuck' : 'Neon';
+    return '💖 ขอบคุณสำหรับการอัปเดต ' + displayName + ' ครับ!\n\n(UQ Friends ไม่นับเป็น progress แต่บันทึกไว้เรียบร้อยแล้ว ✨)';
+  }
 
+  // Regular update: mk/aw campaign = done
   const match = lower.match(/(mk|aw)\s+(.+)\s*=\s*done/);
   if (match) {
     const sys = match[1] === 'mk' ? 'mtk' : 'arp';
@@ -796,8 +836,10 @@ function processCmd(text) {
     });
     updateSimStatus();
     if (updated.length > 0) {
-      if (isAllDone()) return '✅ อัปเดต ' + sysName + ':\n' + updated.map(n => '• ' + n).join('\n') + '\n\n🎉 เสร็จหมดแล้ว! 👕🙂';
-      return '✅ อัปเดต ' + sysName + ':\n' + updated.map(n => '• ' + n).join('\n') + '\n\n' + getFullStatus();
+      // Check if this person has most campaigns (เดอะแบก)
+      const carryMsg = updated.length >= 3 ? '\n\n🏋️ เดอะแบก! คุณอัปเดตเยอะมาก!' : '';
+      if (isAllDone()) return '✅ อัปเดต ' + sysName + ':\n' + updated.map(n => '• ' + n).join('\n') + '\n\n🎉 เสร็จหมดแล้ว! 👕🙂' + carryMsg;
+      return '✅ อัปเดต ' + sysName + ':\n' + updated.map(n => '• ' + n).join('\n') + '\n\n' + getFullStatus() + carryMsg;
     }
   }
   return null;
@@ -821,13 +863,19 @@ function runScenario(type) {
   clearChat();
   if (type === 'morning') setTimeout(() => addMsg('☀️ สวัสดีตอนเช้าครับ\n\n📌 งานวันนี้\n📊 AW → shorturl.asia/NQqVt\n📊 MK → shorturl.asia/viFxd\n\n⏰ Deadline 14:00\n\n' + getFullStatus(), false), 500);
   if (type === 'update') { setTimeout(() => addMsg('aw linen,holiday = done', true), 300); setTimeout(() => showTyping(), 600); setTimeout(() => { hideTyping(); arpStatus.linen = 'done'; arpStatus.holiday = 'done'; updateSimStatus(); addMsg('✅ อัปเดต AW:\n• linen\n• holiday\n\n' + getFullStatus(), false); }, 1500); }
-  if (type === 'alldone') { mtkStatus = { linen: 'done', holiday: 'done', denim: 'done', masterpiece: 'done' }; arpStatus = { linen: 'done', holiday: 'done', denim: 'done', masterpiece: 'pending' }; updateSimStatus(); setTimeout(() => addMsg('aw masterpiece = done', true), 300); setTimeout(() => showTyping(), 600); setTimeout(() => { hideTyping(); arpStatus.masterpiece = 'done'; updateSimStatus(); addMsg('✅ อัปเดต AW:\n• masterpiece\n\n🎉 เสร็จหมดแล้ว! 👕🙂', false); }, 1500); }
+  if (type === 'alldone') { setTimeout(() => addMsg('report = all done', true), 300); setTimeout(() => showTyping(), 600); setTimeout(() => { hideTyping(); mtkStatus = { linen: 'done', holiday: 'done', denim: 'done', masterpiece: 'done' }; arpStatus = { linen: 'done', holiday: 'done', denim: 'done', masterpiece: 'done' }; updateSimStatus(); addMsg('✅ อัปเดตทั้งหมดเป็น Done แล้ว!\n\n🎉🎉🎉 เสร็จหมดแล้ว! 👕🙂', false); }, 1500); }
+  if (type === 'friends') { setTimeout(() => addMsg('aw neon = done', true), 300); setTimeout(() => showTyping(), 600); setTimeout(() => { hideTyping(); simFriendsStatus.neon = 'done'; updateSimStatus(); addMsg('💖 ขอบคุณสำหรับการอัปเดต Neon ครับ!\n\n(UQ Friends ไม่นับเป็น progress แต่บันทึกไว้เรียบร้อยแล้ว ✨)', false); }, 1500); }
 }
 
 // === INIT ===
-setInterval(() => { if (apiUrl) refreshData(); }, 30000);
-refreshData();
-setTimeout(() => addMsg('สวัสดีครับ! 👋\n\nผมคือ UQ Buddy\n\nลองพิมพ์ "report = status" หรือกดปุ่มด้านขวาได้เลย 🙂', false), 500);
+document.addEventListener('DOMContentLoaded', () => {
+  updateStatus();
+  loadData();
+  setTimeout(() => addMsg('สวัสดีครับ! 👋\n\nผมคือ UQ Buddy\n\nลองพิมพ์:\n• "report = status" ดูสถานะ\n• "report = all done" ปิดงานทั้งหมด\n• "aw neon = done" สำหรับ UQ Friends', false), 500);
+});
+
+setInterval(loadData, 60000);
+document.getElementById('settingsModal').addEventListener('click', e => { if (e.target.id === 'settingsModal') closeSettings(); });
   </script>
 </body>
 </html>
