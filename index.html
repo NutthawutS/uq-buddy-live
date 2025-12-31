@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UQ Buddy Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gradient-main: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      --gradient-fire: linear-gradient(135deg, #ff6b6b 0%, #ffa502 100%);
+      --gradient-next: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      --bg-light: #f8f9ff;
+      --text-dark: #2d3436;
+      --text-muted: #636e72;
+      --accent-green: #00d26a;
+      --accent-orange: #ff9f43;
+      --accent-red: #ff6b6b;
+      --shadow-sm: 0 2px 10px rgba(102, 126, 234, 0.1);
+      --shadow-md: 0 10px 30px rgba(102, 126, 234, 0.15);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Prompt', sans-serif; background: var(--bg-light); color: var(--text-dark); min-height: 100vh; }
+    
+    .header { background: var(--gradient-main); padding: 20px 30px; color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-md); }
+    .header-left { display: flex; align-items: center; gap: 15px; }
+    .logo { font-size: 2.5rem; animation: bounce 2s infinite; }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .header h1 { font-size: 1.6rem; font-weight: 700; }
+    .header-week { font-size: 0.9rem; opacity: 0.9; }
+    .header-right { display: flex; align-items: center; gap: 15px; }
+    .live-badge { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; }
+    .live-dot { width: 10px; height: 10px; background: #00ff88; border-radius: 50%; animation: pulse 1.5s infinite; box-shadow: 0 0 10px #00ff88; }
+    .live-dot.demo { background: #ffa502; box-shadow: 0 0 10px #ffa502; }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); opacity: 0.7; } }
+    .refresh-btn { background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); padding: 10px 20px; border-radius: 12px; color: white; font-family: 'Prompt', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    .refresh-btn:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
+    
+    .nav-tabs { display: flex; gap: 8px; padding: 20px 30px; background: white; border-bottom: 1px solid #eee; overflow-x: auto; }
+    .nav-tab { background: var(--bg-light); border: 2px solid transparent; padding: 12px 24px; border-radius: 12px; color: var(--text-muted); font-family: 'Prompt', sans-serif; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: all 0.3s; white-space: nowrap; }
+    .nav-tab:hover { border-color: #764ba2; color: #764ba2; }
+    .nav-tab.active { background: var(--gradient-main); color: white; box-shadow: var(--shadow-md); }
+    
+    .main-content { padding: 30px; max-width: 1400px; margin: 0 auto; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .challenge-banner { background: var(--gradient-fire); border-radius: 20px; padding: 25px 30px; margin-bottom: 25px; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-md); position: relative; overflow: hidden; }
+    .challenge-banner::before { content: '🔥'; position: absolute; font-size: 8rem; right: -20px; top: -20px; opacity: 0.2; }
+    .challenge-banner.next-game { background: var(--gradient-next); color: var(--text-dark); }
+    .challenge-banner.next-game::before { content: '🎮'; }
+    .challenge-banner.completed { background: var(--gradient-success); }
+    .challenge-banner.completed::before { content: '🎉'; }
+    .challenge-left h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
+    .challenge-left p { opacity: 0.9; font-size: 0.95rem; }
+    .challenge-right { text-align: center; }
+    .time-left { font-size: 2.5rem; font-weight: 800; }
+    .time-label { font-size: 0.85rem; opacity: 0.9; }
+    .next-day { font-size: 1.5rem; font-weight: 700; }
+    .next-date { font-size: 0.9rem; opacity: 0.8; margin-top: 5px; }
+    
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+    .dashboard-grid.top-row-3 { grid-template-columns: 1fr 180px 1fr; margin-bottom: 25px; gap: 20px; }
+    @media (max-width: 900px) { .dashboard-grid.top-row-3 { grid-template-columns: 1fr; } }
+    
+    .card { background: white; border-radius: 20px; padding: 25px; box-shadow: var(--shadow-sm); transition: all 0.3s; border: 2px solid transparent; }
+    .card:hover { box-shadow: var(--shadow-md); transform: translateY(-5px); border-color: #667eea; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .card-title { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+    .card-badge { font-size: 0.8rem; padding: 6px 14px; border-radius: 20px; font-weight: 600; }
+    .card-badge.success { background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); color: #155724; }
+    .card-badge.warning { background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%); color: #856404; }
+    
+    .motivation-box { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 16px; padding: 20px; color: white; text-align: center; }
+    .motivation-emoji { font-size: 3rem; margin-bottom: 10px; }
+    .motivation-text { font-size: 1.1rem; font-weight: 600; }
+    .motivation-sub { font-size: 0.9rem; opacity: 0.9; margin-top: 5px; }
+    
+    .streak-card { background: var(--gradient-success); border-radius: 16px; padding: 20px; color: white; text-align: center; }
+    .streak-fire { font-size: 2rem; margin-bottom: 5px; }
+    .streak-number { font-size: 3rem; font-weight: 800; line-height: 1; }
+    .streak-label { font-size: 0.9rem; opacity: 0.9; margin-top: 5px; }
+    
+    .progress-ring-container { display: flex; justify-content: center; margin-bottom: 20px; }
+    .progress-ring { position: relative; width: 140px; height: 140px; }
+    .progress-ring svg { transform: rotate(-90deg); }
+    .progress-ring .bg { fill: none; stroke: #e9ecef; stroke-width: 12; }
+    .progress-ring .progress { fill: none; stroke: url(#gradient); stroke-width: 12; stroke-linecap: round; stroke-dasharray: 377; stroke-dashoffset: 377; transition: stroke-dashoffset 1s ease; }
+    .progress-ring .center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+    .progress-ring .percentage { font-size: 2rem; font-weight: 700; }
+    .progress-ring .label { font-size: 0.8rem; color: var(--text-muted); }
+    
+    .status-list { display: flex; flex-direction: column; gap: 10px; }
+    .status-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: var(--bg-light); border-radius: 12px; transition: all 0.2s; border-left: 4px solid transparent; }
+    .status-item:hover { transform: translateX(5px); }
+    .status-item.done { border-left-color: var(--accent-green); background: linear-gradient(90deg, rgba(0,210,106,0.1) 0%, var(--bg-light) 100%); }
+    .status-item.pending { border-left-color: var(--accent-orange); background: linear-gradient(90deg, rgba(255,159,67,0.1) 0%, var(--bg-light) 100%); }
+    .status-item-left { display: flex; align-items: center; gap: 12px; }
+    .status-icon { font-size: 1.3rem; }
+    .status-name { font-weight: 500; }
+    .status-value { font-size: 0.85rem; padding: 4px 12px; border-radius: 8px; font-weight: 600; }
+    .status-value.done { background: var(--accent-green); color: white; }
+    .status-value.pending { background: var(--accent-orange); color: white; }
+    
+    .checklist-table { width: 100%; border-collapse: collapse; }
+    .checklist-table th { text-align: left; padding: 12px; color: var(--text-muted); font-weight: 500; font-size: 0.85rem; border-bottom: 2px solid #eee; }
+    .checklist-table td { padding: 16px 12px; border-bottom: 1px solid #f0f0f0; }
+    .checklist-table tr:last-child td { border-bottom: none; }
+    .day-label { font-weight: 600; display: flex; align-items: center; gap: 12px; }
+    .day-icon { font-size: 1.5rem; }
+    .check-icon { font-size: 1.2rem; }
+    .check-icon.done { color: var(--accent-green); }
+    .check-icon.pending { color: var(--accent-orange); }
+    
+    .leaderboard-mini { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; padding: 20px; color: white; box-shadow: var(--shadow-md); }
+    .leaderboard-mini-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+    .leaderboard-mini-trophy { font-size: 1.8rem; animation: trophyBounce 2s infinite; }
+    @keyframes trophyBounce { 0%, 100% { transform: scale(1) rotate(-5deg); } 50% { transform: scale(1.1) rotate(5deg); } }
+    .leaderboard-mini-title { font-size: 1rem; font-weight: 700; }
+    .leaderboard-mini-list { display: flex; flex-direction: column; gap: 8px; }
+    .leaderboard-mini-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: rgba(255,255,255,0.15); border-radius: 10px; transition: all 0.3s; }
+    .leaderboard-mini-item:hover { background: rgba(255,255,255,0.25); transform: translateX(5px); }
+    .leaderboard-mini-item.first { background: linear-gradient(135deg, rgba(255,215,0,0.3) 0%, rgba(255,215,0,0.1) 100%); border: 1px solid rgba(255,215,0,0.4); }
+    .leaderboard-mini-rank { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; }
+    .leaderboard-mini-rank.gold { background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%); color: #333; box-shadow: 0 2px 10px rgba(255,215,0,0.4); }
+    .leaderboard-mini-rank.silver { background: linear-gradient(135deg, #e0e0e0 0%, #b0b0b0 100%); color: #333; }
+    .leaderboard-mini-rank.bronze { background: linear-gradient(135deg, #cd7f32 0%, #a0522d 100%); color: white; }
+    .leaderboard-mini-name { flex: 1; font-weight: 500; font-size: 0.9rem; }
+    .leaderboard-mini-time { font-weight: 700; font-size: 0.9rem; color: #ffd700; }
+    .leaderboard-mini-empty { text-align: center; padding: 15px; opacity: 0.9; font-size: 0.9rem; }
+    
+    /* Ranking Tabs */
+    .ranking-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .ranking-tab { flex: 1; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 12px; background: var(--bg-light); font-family: 'Prompt', sans-serif; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.3s; }
+    .ranking-tab:hover { border-color: #667eea; color: #667eea; }
+    .ranking-tab.active { background: var(--gradient-main); color: white; border-color: transparent; box-shadow: var(--shadow-sm); }
+    .ranking-content { display: none; }
+    .ranking-content.active { display: block; animation: fadeIn 0.3s ease; }
+    
+    .ranking-section { margin-bottom: 20px; }
+    .ranking-title { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 12px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+    .ranking-list { display: flex; flex-direction: column; gap: 10px; }
+    .ranking-item { background: var(--bg-light); border-radius: 12px; border-left: 4px solid transparent; padding: 12px 16px; }
+    .ranking-item.best { border-left-color: var(--accent-green); background: linear-gradient(90deg, rgba(0,210,106,0.08) 0%, var(--bg-light) 100%); }
+    .ranking-item.worst { border-left-color: var(--accent-red); background: linear-gradient(90deg, rgba(255,107,107,0.08) 0%, var(--bg-light) 100%); }
+    .ranking-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .ranking-item-left { display: flex; align-items: center; gap: 10px; }
+    .ranking-star { font-size: 1.2rem; }
+    .ranking-value { font-weight: 700; padding: 4px 10px; border-radius: 8px; font-size: 0.85rem; }
+    .ranking-value.best { background: rgba(0,210,106,0.15); color: var(--accent-green); }
+    .ranking-value.worst { background: rgba(255,107,107,0.15); color: var(--accent-red); }
+    .ranking-campaign { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; word-break: break-word; margin-bottom: 8px; }
+    .copy-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 6px 12px; border-radius: 8px; color: white; font-size: 0.75rem; font-family: 'Prompt', sans-serif; cursor: pointer; transition: all 0.2s; }
+    .copy-btn:hover { transform: scale(1.05); box-shadow: var(--shadow-sm); }
+    .copy-btn.copied { background: var(--gradient-success); }
+    
+    /* Simulator */
+    .simulator-container { display: grid; grid-template-columns: 320px 1fr; gap: 30px; }
+    @media (max-width: 900px) { .simulator-container { grid-template-columns: 1fr; } }
+    .phone { width: 320px; height: 640px; background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 40px; padding: 10px; box-shadow: var(--shadow-md); margin: 0 auto; }
+    .phone-screen { background: #7bb4e3; height: 100%; border-radius: 32px; overflow: hidden; display: flex; flex-direction: column; }
+    .phone-header { background: #06c755; color: white; padding: 15px; display: flex; align-items: center; gap: 10px; }
+    .phone-header .avatar { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .phone-header .group-name { font-weight: 600; }
+    .phone-header .group-members { font-size: 0.75rem; opacity: 0.8; }
+    .chat-area { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+    .message { max-width: 85%; padding: 10px 14px; border-radius: 18px; font-size: 0.9rem; line-height: 1.4; }
+    .message.user { background: #06c755; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .message.bot { background: white; color: #333; align-self: flex-start; border-bottom-left-radius: 4px; white-space: pre-line; }
+    .message.bot .bot-name { font-size: 0.7rem; color: #06c755; font-weight: 600; margin-bottom: 4px; }
+    .message.bot .mention-tag { color: #0091ea; font-weight: 600; }
+    .chat-input { background: white; padding: 10px; display: flex; gap: 8px; }
+    .chat-input input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 10px 15px; font-size: 0.9rem; font-family: 'Prompt', sans-serif; outline: none; }
+    .chat-input input:focus { border-color: #06c755; }
+    .chat-input button { background: #06c755; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; }
+    .typing-indicator { display: flex; gap: 4px; padding: 10px 14px; background: white; border-radius: 18px; width: fit-content; }
+    .typing-indicator span { width: 8px; height: 8px; background: #999; border-radius: 50%; animation: typing 1.4s infinite; }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typing { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+    
+    .simulator-controls { display: flex; flex-direction: column; gap: 20px; }
+    .control-card { background: white; border-radius: 16px; padding: 20px; box-shadow: var(--shadow-sm); }
+    .control-card h3 { font-size: 1rem; margin-bottom: 15px; }
+    .scenario-buttons { display: flex; flex-direction: column; gap: 10px; }
+    .scenario-btn { background: var(--gradient-main); color: white; border: none; padding: 14px 18px; border-radius: 12px; font-size: 0.9rem; font-family: 'Prompt', sans-serif; cursor: pointer; text-align: left; transition: all 0.3s; }
+    .scenario-btn:hover { transform: translateX(8px); box-shadow: var(--shadow-md); }
+    .scenario-btn .scenario-title { font-weight: 600; margin-bottom: 4px; }
+    .scenario-btn .scenario-desc { font-size: 0.8rem; opacity: 0.85; }
+    .quick-commands { display: flex; flex-wrap: wrap; gap: 8px; }
+    .quick-cmd { background: var(--bg-light); border: 2px solid #e0e0e0; padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; font-family: 'Prompt', sans-serif; cursor: pointer; transition: all 0.2s; }
+    .quick-cmd:hover { border-color: #764ba2; color: #764ba2; }
+    .quick-cmd.update { border-color: var(--accent-green); color: var(--accent-green); }
+    .quick-cmd.update:hover { background: var(--accent-green); color: white; }
+    .quick-cmd.danger { border-color: var(--accent-red); color: var(--accent-red); }
+    .quick-cmd.danger:hover { background: var(--accent-red); color: white; }
+    .sim-status { background: var(--bg-light); border-radius: 12px; padding: 15px; margin-top: 10px; }
+    .sim-status-title { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; font-weight: 500; }
+    .sim-status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .sim-status-item { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 6px 0; }
+    .sim-status-item .label { color: var(--text-muted); }
+    .sim-status-item .value { font-weight: 600; }
+    .sim-status-item .value.done { color: var(--accent-green); }
+    .sim-status-item .value.pending { color: var(--accent-orange); }
+    .clear-btn { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; cursor: pointer; font-family: 'Prompt', sans-serif; font-weight: 500; margin-top: 15px; }
+    
+    /* Setup */
+    .api-setup { background: white; border-radius: 20px; padding: 25px; margin-bottom: 25px; box-shadow: var(--shadow-sm); }
+    .api-setup h3 { margin-bottom: 15px; }
+    .api-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+    .api-input { flex: 1; padding: 12px 16px; background: var(--bg-light); border: 2px solid #e0e0e0; border-radius: 10px; font-size: 0.9rem; outline: none; font-family: 'Prompt', sans-serif; }
+    .api-input:focus { border-color: #667eea; }
+    .api-btn { background: var(--gradient-success); border: none; padding: 12px 24px; border-radius: 10px; color: white; font-family: 'Prompt', sans-serif; font-weight: 600; cursor: pointer; }
+    .api-status { font-size: 0.85rem; color: var(--text-muted); }
+    .api-status.connected { color: var(--accent-green); }
+    .api-status.error { color: var(--accent-red); }
+    
+    /* Toast */
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--gradient-success); color: white; padding: 15px 30px; border-radius: 12px; font-weight: 600; z-index: 9999; opacity: 0; transition: all 0.3s ease; box-shadow: var(--shadow-md); }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    
+    @media (max-width: 768px) { 
+      .header { flex-direction: column; gap: 15px; } 
+      .challenge-banner { flex-direction: column; text-align: center; gap: 20px; } 
+      .main-content { padding: 20px; } 
+      .dashboard-grid { grid-template-columns: 1fr; } 
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">🤖</div>
+      <div>
+        <h1>UQ Buddy Dashboard</h1>
+        <div class="header-week" id="headerWeek">📅 Week: -</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="live-badge"><span class="live-dot" id="liveDot"></span><span id="liveText">Demo</span></div>
+      <button class="refresh-btn" onclick="refreshData()">🔄 รีเฟรช</button>
+    </div>
+  </header>
+
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+    <button class="nav-tab" onclick="switchTab('ranking')">🏆 Ranking</button>
+    <button class="nav-tab" onclick="switchTab('simulator')">📱 Simulator</button>
+    <button class="nav-tab" onclick="switchTab('setup')">⚙️ Setup</button>
+  </nav>
+
+  <main class="main-content">
+    <!-- Dashboard Tab -->
+    <div id="dashboard-tab" class="tab-content active">
+      <div class="challenge-banner" id="challengeBanner">
+        <div class="challenge-left">
+          <h2 id="challengeTitle">🔥 Challenge วันนี้!</h2>
+          <p id="challengeDesc">ทำให้เสร็จก่อน 14:00 รับ Streak!</p>
+        </div>
+        <div class="challenge-right" id="challengeRight">
+          <div class="time-left" id="timeLeft">--:--:--</div>
+          <div class="time-label" id="timeLabel">เหลือเวลา</div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid top-row-3">
+        <div class="motivation-box" id="motivationBox">
+          <div class="motivation-emoji">💪</div>
+          <div class="motivation-text">มาลุยกันเถอะ!</div>
+          <div class="motivation-sub">ทำเสร็จ 0/8 รายการ</div>
+        </div>
+        <div class="streak-card">
+          <div class="streak-fire">🔥</div>
+          <div class="streak-number" id="streakCount">0</div>
+          <div class="streak-label">สัปดาห์ติดต่อกัน</div>
+        </div>
+        <div class="leaderboard-mini">
+          <div class="leaderboard-mini-header">
+            <span class="leaderboard-mini-trophy">🏆</span>
+            <span class="leaderboard-mini-title">เสร็จเร็วที่สุดวันนี้</span>
+          </div>
+          <div id="leaderboardList" class="leaderboard-mini-list"><div class="leaderboard-mini-empty">⏳ รอเชื่อมต่อ API...</div></div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">📊 Media Tracking (MK)</h2>
+            <span class="card-badge warning" id="mtkBadge">-/-</span>
+          </div>
+          <div class="progress-ring-container">
+            <div class="progress-ring">
+              <svg width="140" height="140">
+                <defs><linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#667eea"/><stop offset="100%" style="stop-color:#764ba2"/></linearGradient></defs>
+                <circle class="bg" cx="70" cy="70" r="60"/>
+                <circle class="progress" id="mtkProgress" cx="70" cy="70" r="60"/>
+              </svg>
+              <div class="center-text"><div class="percentage" id="mtkPercent">-</div><div class="label">เสร็จแล้ว</div></div>
+            </div>
+          </div>
+          <div class="status-list" id="mtkStatusList"><div style="text-align:center;color:var(--text-muted);padding:20px;">⏳ รอเชื่อมต่อ API...</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">📊 Asean Weekly (AW)</h2>
+            <span class="card-badge warning" id="arpBadge">-/-</span>
+          </div>
+          <div class="progress-ring-container">
+            <div class="progress-ring">
+              <svg width="140" height="140">
+                <circle class="bg" cx="70" cy="70" r="60"/>
+                <circle class="progress" id="arpProgress" cx="70" cy="70" r="60"/>
+              </svg>
+              <div class="center-text"><div class="percentage" id="arpPercent">-</div><div class="label">เสร็จแล้ว</div></div>
+            </div>
+          </div>
+          <div class="status-list" id="arpStatusList"><div style="text-align:center;color:var(--text-muted);padding:20px;">⏳ รอเชื่อมต่อ API...</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h2 class="card-title">📅 Checklist สัปดาห์นี้</h2></div>
+          <table class="checklist-table">
+            <thead><tr><th>วัน</th><th>เปิด</th><th>Deadline</th><th>เสร็จ</th></tr></thead>
+            <tbody>
+              <tr><td><span class="day-label"><span class="day-icon">🌤️</span> พุธ</span></td><td><span class="check-icon pending" id="wed-open">🟠</span></td><td><span class="check-icon pending" id="wed-deadline">🟠</span></td><td><span class="check-icon pending" id="wed-done">🟠</span></td></tr>
+              <tr><td><span class="day-label"><span class="day-icon">🌅</span> ศุกร์</span></td><td><span class="check-icon pending" id="fri-open">🟠</span></td><td><span class="check-icon pending" id="fri-deadline">🟠</span></td><td><span class="check-icon pending" id="fri-done">🟠</span></td></tr>
+              <tr><td><span class="day-label"><span class="day-icon">☀️</span> จันทร์</span></td><td><span class="check-icon pending" id="mon-open">🟠</span></td><td><span class="check-icon pending" id="mon-deadline">🟠</span></td><td><span class="check-icon pending" id="mon-done">🟠</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h2 class="card-title">🎖️ Badge Hall of Fame</h2></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center;">
+            <div style="padding:15px;background:var(--bg-light);border-radius:12px;"><div style="font-size:2rem;">⚡</div><div style="font-size:0.8rem;color:var(--text-muted);">มือไว</div><div style="font-size:1.5rem;font-weight:700;color:#667eea;" id="badgeFast">0</div></div>
+            <div style="padding:15px;background:var(--bg-light);border-radius:12px;"><div style="font-size:2rem;">🔥</div><div style="font-size:0.8rem;color:var(--text-muted);">ไฟแรง</div><div style="font-size:1.5rem;font-weight:700;color:#667eea;" id="badgeEarly">0</div></div>
+            <div style="padding:15px;background:var(--bg-light);border-radius:12px;"><div style="font-size:2rem;">🎯</div><div style="font-size:0.8rem;color:var(--text-muted);">ครบถ้วน</div><div style="font-size:1.5rem;font-weight:700;color:#667eea;" id="badgeComplete">0</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ranking Tab -->
+    <div id="ranking-tab" class="tab-content">
+      <div class="card">
+        <div class="card-header"><h2 class="card-title">🏆 Campaign Ranking (Top 3 Best / Worst)</h2></div>
+        
+        <div class="ranking-tabs">
+          <button class="ranking-tab active" onclick="switchRankingTab('traffic')">🚗 Traffic</button>
+          <button class="ranking-tab" onclick="switchRankingTab('vdo')">🎬 VDO</button>
+          <button class="ranking-tab" onclick="switchRankingTab('awareness')">👁️ Awareness</button>
+        </div>
+
+        <div id="ranking-traffic" class="ranking-content active">
+          <div style="text-align:center;color:var(--text-muted);padding:40px;">⏳ กรุณาเชื่อมต่อ API...</div>
+        </div>
+        <div id="ranking-vdo" class="ranking-content">
+          <div style="text-align:center;color:var(--text-muted);padding:40px;">⏳ กรุณาเชื่อมต่อ API...</div>
+        </div>
+        <div id="ranking-awareness" class="ranking-content">
+          <div style="text-align:center;color:var(--text-muted);padding:40px;">⏳ กรุณาเชื่อมต่อ API...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Simulator Tab -->
+    <div id="simulator-tab" class="tab-content">
+      <div class="simulator-container">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-header">
+              <div class="avatar">🤖</div>
+              <div><div class="group-name">ยูนิโคกันโป๊ะ</div><div class="group-members">UQ Buddy + 5 members</div></div>
+            </div>
+            <div class="chat-area" id="chatArea"></div>
+            <div class="chat-input">
+              <input type="text" id="messageInput" placeholder="พิมพ์ข้อความ..." onkeypress="if(event.key==='Enter')sendMessage()">
+              <button onclick="sendMessage()">➤</button>
+            </div>
+          </div>
+        </div>
+        <div class="simulator-controls">
+          <div class="control-card">
+            <h3>👤 ชื่อของคุณ</h3>
+            <input type="text" class="api-input" id="userNameInput" value="คุณ" onchange="currentUserName=this.value||'คุณ'" style="width:100%">
+          </div>
+          <div class="control-card">
+            <h3>🎬 ตัวอย่างการใช้งาน</h3>
+            <div class="scenario-buttons">
+              <button class="scenario-btn" onclick="runScenario('morning')"><div class="scenario-title">☀️ เช้าวันจันทร์</div><div class="scenario-desc">Bot แจ้งเตือนเปิดงาน</div></button>
+              <button class="scenario-btn" onclick="runScenario('update')"><div class="scenario-title">✅ อัปเดตงานเสร็จ</div><div class="scenario-desc">พิมพ์แจ้งว่าทำเสร็จ</div></button>
+              <button class="scenario-btn" onclick="runScenario('alldone')"><div class="scenario-title">🎉 งานเสร็จหมด</div><div class="scenario-desc">ทุกคนอัปเดตครบ!</div></button>
+            </div>
+          </div>
+          <div class="control-card">
+            <h3>⌨️ คำสั่งด่วน</h3>
+            <div class="quick-commands">
+              <button class="quick-cmd" onclick="sendQuickCmd('report = status')">📊 ดูสถานะ</button>
+              <button class="quick-cmd update" onclick="sendQuickCmd('aw linen = done')">✅ AW Done</button>
+              <button class="quick-cmd update" onclick="sendQuickCmd('mk holiday = done')">✅ MK Done</button>
+              <button class="quick-cmd danger" onclick="sendQuickCmd('report = reset')">🔄 Reset</button>
+            </div>
+          </div>
+          <div class="control-card">
+            <h3>📋 สถานะ Simulator</h3>
+            <div class="sim-status">
+              <div class="sim-status-title">MK</div>
+              <div class="sim-status-grid">
+                <div class="sim-status-item"><span class="label">Linen</span><span class="value pending" id="sim-mtk-linen">Pending</span></div>
+                <div class="sim-status-item"><span class="label">Holiday</span><span class="value pending" id="sim-mtk-holiday">Pending</span></div>
+                <div class="sim-status-item"><span class="label">Denim</span><span class="value pending" id="sim-mtk-denim">Pending</span></div>
+                <div class="sim-status-item"><span class="label">Masterpiece</span><span class="value pending" id="sim-mtk-masterpiece">Pending</span></div>
+              </div>
+            </div>
+            <div class="sim-status">
+              <div class="sim-status-title">AW</div>
+              <div class="sim-status-grid">
+                <div class="sim-status-item"><span class="label">Linen</span><span class="value pending" id="sim-arp-linen">Pending</span></div>
+                <div class="sim-status-item"><span class="label">Holiday</span><span class="value pending" id="sim-arp-holiday">Pending</span></div>
+                <div class="sim-status-item"><span class="label">Denim</span><span class="value pending" id="sim-arp-denim">Pending</span></div>
+                <div class="sim-status-item"><span class="label">Masterpiece</span><span class="value pending" id="sim-arp-masterpiece">Pending</span></div>
+              </div>
+            </div>
+            <button class="clear-btn" onclick="clearChat()">🗑️ ล้างแชท & รีเซ็ต</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Setup Tab -->
+    <div id="setup-tab" class="tab-content">
+      <div class="api-setup">
+        <h3>🔗 เชื่อมต่อ API</h3>
+        <div class="api-input-group">
+          <input type="password" class="api-input" id="apiUrl" placeholder="วาง URL ของ Web App..." autocomplete="off">
+          <button class="api-btn" onclick="connectApi()">เชื่อมต่อ</button>
+        </div>
+        <p class="api-status" id="apiStatus">ยังไม่ได้เชื่อมต่อ (ใช้ Demo Mode)</p>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:10px;">🔒 URL จะถูกเก็บในเครื่องคุณเท่านั้น ไม่ส่งไปที่ไหน</p>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2 class="card-title">📝 API Endpoint ที่ต้อง Deploy</h2></div>
+        <div style="color:var(--text-muted);line-height:1.8;font-size:0.9rem;">
+          <p><strong>URL Format:</strong> <code>?action=dashboard</code></p>
+          <br>
+          <p><strong>Sheets ที่ใช้:</strong></p>
+          <ul style="margin-left:20px;">
+            <li>MTK Tracker (Campaign, MTK Status, ARP Status, MTK Done By, MTK Done Time, ARP Done By, ARP Done Time)</li>
+            <li>Weekly_Log (report_week)</li>
+            <li>Summary (section, rank, campaign, result)</li>
+            <li>Badges (Name, ⚡ มือไว, 🔥 ไฟแรง, 🎯 ครบถ้วน)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">✅ Copied!</div>
+
+  <script>
+// === STATE ===
+let apiUrl = localStorage.getItem('uqBuddyApiUrl') || '';
+let isConnected = false;
+let currentUserName = 'คุณ';
+
+// === TABS ===
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(name + '-tab').classList.add('active');
+  event.target.classList.add('active');
+}
+
+function switchRankingTab(name) {
+  document.querySelectorAll('.ranking-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ranking-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('ranking-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// === TOAST ===
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// === COPY ===
+function copyCampaign(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied');
+    btn.textContent = '✅ Copied!';
+    showToast('✅ Copy ชื่อแคมเปญแล้ว!');
+    setTimeout(() => { btn.classList.remove('copied'); btn.textContent = '📋 Copy'; }, 2000);
+  });
+}
+
+// === TITLE ===
+function getUserTitle(f) {
+  if (f >= 10) return ' 👑ราชารีพอร์ท';
+  if (f >= 5) return ' 💎เพชรรีพอร์ท';
+  if (f >= 3) return ' 🌟ดาวรุ่งรีพอร์ท';
+  return '';
+}
+
+// === CHALLENGE BANNER ===
+function updateChallenge() {
+  const now = new Date();
+  const day = now.getDay();
+  const banner = document.getElementById('challengeBanner');
+  const title = document.getElementById('challengeTitle');
+  const desc = document.getElementById('challengeDesc');
+  const right = document.getElementById('challengeRight');
+
+  if (day === 5 || day === 1) {
+    const dayName = day === 5 ? 'ศุกร์' : 'จันทร์';
+    const deadline = new Date(); deadline.setHours(14, 0, 0, 0);
+    
+    if (now >= deadline) {
+      banner.className = 'challenge-banner completed';
+      title.innerHTML = '🎉 จบ Challenge!';
+      desc.textContent = 'เจอกัน Challenge ถัดไป!';
+      right.innerHTML = '<div class="next-day">✨</div><div class="next-date">เก่งมาก!</div>';
+    } else {
+      banner.className = 'challenge-banner';
+      title.innerHTML = '🔥 Challenge วัน' + dayName + '!';
+      desc.textContent = 'ทำให้เสร็จก่อน 14:00 รับ Streak!';
+      const diff = deadline - now;
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      right.innerHTML = '<div class="time-left">' + [h,m,s].map(n => String(n).padStart(2,'0')).join(':') + '</div><div class="time-label">เหลือเวลา</div>';
+      if (h === 0 && m < 30) banner.style.background = 'linear-gradient(135deg, #ff4757 0%, #ff6b81 100%)';
+    }
+  } else {
+    banner.className = 'challenge-banner next-game';
+    title.innerHTML = '🎮 Next Challenge';
+    const daysToFri = (5 - day + 7) % 7 || 7;
+    const daysToMon = (1 - day + 7) % 7 || 7;
+    const nextDays = Math.min(daysToFri, daysToMon);
+    const nextDate = new Date(now); nextDate.setDate(now.getDate() + nextDays);
+    const nextDayName = nextDate.getDay() === 5 ? 'ศุกร์' : 'จันทร์';
+    desc.textContent = 'เตรียมตัวให้พร้อม!';
+    right.innerHTML = '<div class="next-day">วัน' + nextDayName + '</div><div class="next-date">' + nextDate.toLocaleDateString('th-TH',{day:'numeric',month:'short'}) + ' (อีก ' + nextDays + ' วัน)</div>';
+  }
+}
+setInterval(updateChallenge, 1000);
+updateChallenge();
+
+// === API ===
+if (apiUrl) document.getElementById('apiUrl').value = apiUrl;
+
+function connectApi() {
+  apiUrl = document.getElementById('apiUrl').value.trim();
+  if (apiUrl) { localStorage.setItem('uqBuddyApiUrl', apiUrl); refreshData(); }
+}
+
+async function refreshData() {
+  updateLiveStatus();
+  
+  if (!apiUrl) { 
+    document.getElementById('apiStatus').textContent = '⚠️ กรุณาเชื่อมต่อ API ในแท็บ Setup';
+    document.getElementById('apiStatus').className = 'api-status error';
+    loadDemo();
+    return; 
+  }
+  
+  try {
+    document.getElementById('apiStatus').textContent = '🔄 กำลังโหลด...';
+    const res = await fetch(apiUrl + '?action=dashboard');
+    const data = await res.json();
+    isConnected = true;
+    updateLiveStatus();
+    renderDashboard(data);
+    document.getElementById('apiStatus').textContent = '✅ เชื่อมต่อสำเร็จ (อัปเดตล่าสุด: ' + new Date().toLocaleTimeString('th-TH') + ')';
+    document.getElementById('apiStatus').className = 'api-status connected';
+  } catch (e) {
+    isConnected = false;
+    updateLiveStatus();
+    document.getElementById('apiStatus').textContent = '❌ เชื่อมต่อไม่ได้: ' + e.message;
+    document.getElementById('apiStatus').className = 'api-status error';
+    loadDemo();
+  }
+}
+
+function updateLiveStatus() {
+  const dot = document.getElementById('liveDot');
+  const text = document.getElementById('liveText');
+  if (isConnected) {
+    dot.classList.remove('demo');
+    text.textContent = 'Live';
+  } else {
+    dot.classList.add('demo');
+    text.textContent = 'Demo';
+  }
+}
+
+// === DEMO DATA ===
+function loadDemo() {
+  renderDashboard({
+    reportWeek: 'Demo Mode',
+    mtk: { progress: { done: 3, total: 4 }, campaigns: [{ name: 'Linen', status: 'Done' }, { name: 'Holiday', status: 'Done' }, { name: 'Denim', status: 'Done' }, { name: 'Masterpiece', status: 'Pending' }] },
+    arp: { progress: { done: 2, total: 4 }, campaigns: [{ name: 'Linen', status: 'Done' }, { name: 'Holiday', status: 'Done' }, { name: 'Denim', status: 'Pending' }, { name: 'Masterpiece', status: 'Pending' }] },
+    leaderboard: [{ name: 'หอกอ', time: '11:23', count: 3, badges: { fast: 3, early: 2, complete: 1 } }, { name: 'พี่เบนซ์', time: '11:45', count: 1, badges: { fast: 1, early: 1, complete: 0 } }],
+    badges: { totalFast: 4, totalEarly: 3, totalComplete: 1 },
+    streak: 3,
+    earlyBirds: ['หอกอ', 'พี่เบนซ์'],
+    summary: {
+      traffic: {
+        best: [{ rank: 1, campaign: 'Uniqlo_LO_Meta_[POST 3]_SNS_Traffic_191225-221225_CPC_1-4_129000_2025122892', result: 'CTR 2.35%' }, { rank: 2, campaign: 'Uniqlo_Holiday_Meta_[SNS #6 Holiday Gift shopping]_SNS_Traffic_221225-311225', result: 'CTR 1.59%' }, { rank: 3, campaign: 'Uniqlo_Holiday_Meta_[SNS #7 Styling for X mas]_SNS_Traffic_231225-311225', result: 'CTR 1.39%' }],
+        worst: [{ rank: 1, campaign: 'Uniqlo_UT_IG_[Post 6: Jason Polan UT]_SNS_Traffic_221225-281225_CPC', result: 'CTR 0.91%' }, { rank: 2, campaign: 'Uniqlo_Holiday_Meta_[SNS #5 Body analysis]_SNS_Traffic_221225-311225', result: 'CTR 1.34%' }, { rank: 3, campaign: 'Uniqlo_UT_FB_[Post 6: Jason Polan UT]_SNS_Traffic_221225-281225', result: 'CTR 1.37%' }]
+      },
+      vdo: {
+        best: [{ rank: 1, campaign: 'Uniqlo_Special Collection_IG_[26SS JWA early drop]_Instagram Reel_VDO Views', result: 'CV 20.74%' }, { rank: 2, campaign: 'Uniqlo_Special Collection_IG_[26SS CPJ Pleated Wide]_SNS_VDO Views', result: 'CV 17.09%' }, { rank: 3, campaign: 'Uniqlo_Masterpiece_IG_[25SS Fleece Jacket]_Instagram Post_VDO Views', result: 'CV 10.86%' }],
+        worst: [{ rank: 1, campaign: 'Uniqlo_Sweat 26SS_TT_[KOL - Icepariss]_KOL boost_VDO Views', result: 'CV 0.52%' }, { rank: 2, campaign: 'Uniqlo_Sweat 26SS_TT_[KOL - gybdd]_KOL boost_VDO Views', result: 'CV 0.72%' }, { rank: 3, campaign: 'Uniqlo_Holiday_TT_[bowlingfreckled]_KOL boost_VDO Views', result: 'CV 1.16%' }]
+      },
+      awareness: {
+        best: [{ rank: 1, campaign: 'Uniqlo_Special Collection_FB_[26SS JWA early drop]_SNS_Awareness', result: 'CPM 8.54' }, { rank: 2, campaign: 'Uniqlo_New items_Meta_[UQ New items - Dec Post 4]_SNS_Awareness', result: 'CPM 8.82' }, { rank: 3, campaign: 'Uniqlo_Special Collection_IG_[26SS JWA]_Instagram Post_Awareness', result: 'CPM 8.83' }],
+        worst: [{ rank: 1, campaign: 'Uniqlo_Sustainability_Meta_[Post 2 HT donation]_SNS_Awareness', result: 'CPM 11.51' }, { rank: 2, campaign: 'Uniqlo_LO_Meta_[POST 3]_SNS_Awareness_231225-251225', result: 'CPM 10.82' }, { rank: 3, campaign: 'Uniqlo_Special Collection_IG_[26SS JWA]_Awareness', result: 'CPM 8.83' }]
+      }
+    }
+  });
+}
+
+// === RENDER ===
+function renderDashboard(data) {
+  // Week
+  document.getElementById('headerWeek').textContent = '📅 Week: ' + (data.reportWeek || '-');
+  
+  // Progress Cards
+  renderProgressCard('mtk', data.mtk);
+  renderProgressCard('arp', data.arp);
+  
+  // Motivation
+  const totalDone = data.mtk.progress.done + data.arp.progress.done;
+  const totalAll = data.mtk.progress.total + data.arp.progress.total;
+  updateMotivation(totalDone, totalAll);
+  
+  // Streak
+  document.getElementById('streakCount').textContent = data.streak || 0;
+  
+  // Leaderboard
+  renderLeaderboard(data.leaderboard);
+  
+  // Badges
+  document.getElementById('badgeFast').textContent = data.badges?.totalFast || 0;
+  document.getElementById('badgeEarly').textContent = data.badges?.totalEarly || 0;
+  document.getElementById('badgeComplete').textContent = data.badges?.totalComplete || 0;
+  
+  // Ranking
+  if (data.summary) {
+    renderRanking('traffic', 'CTR%', data.summary.traffic);
+    renderRanking('vdo', 'CV%', data.summary.vdo);
+    renderRanking('awareness', 'CPM', data.summary.awareness);
+  }
+}
+
+function renderProgressCard(sys, data) {
+  const { progress, campaigns } = data;
+  const done = progress.done;
+  const total = progress.total;
+  const pct = total > 0 ? (done / total) * 100 : 0;
+  
+  document.getElementById(sys + 'Badge').textContent = done + '/' + total;
+  document.getElementById(sys + 'Badge').className = 'card-badge ' + (done === total ? 'success' : 'warning');
+  document.getElementById(sys + 'Percent').textContent = Math.round(pct) + '%';
+  document.getElementById(sys + 'Progress').style.strokeDashoffset = 377 - (pct / 100) * 377;
+  
+  document.getElementById(sys + 'StatusList').innerHTML = campaigns.map(c => {
+    const isDone = c.status === 'Done';
+    return '<div class="status-item ' + (isDone ? 'done' : 'pending') + '"><div class="status-item-left"><span class="status-icon">' + (isDone ? '✅' : '🟠') + '</span><span class="status-name">' + c.name + '</span></div><span class="status-value ' + (isDone ? 'done' : 'pending') + '">' + c.status + '</span></div>';
+  }).join('');
+}
+
+function renderLeaderboard(leaderboard) {
+  const list = document.getElementById('leaderboardList');
+  if (!leaderboard || leaderboard.length === 0) {
+    list.innerHTML = '<div class="leaderboard-mini-empty">🎯 มาเป็นคนแรก!</div>';
+    return;
+  }
+  const ranks = ['gold', 'silver', 'bronze'];
+  const medals = ['🥇', '🥈', '🥉'];
+  list.innerHTML = leaderboard.slice(0, 3).map((u, i) => {
+    const title = getUserTitle(u.badges?.fast || 0);
+    return '<div class="leaderboard-mini-item' + (i === 0 ? ' first' : '') + '"><span class="leaderboard-mini-rank ' + (ranks[i] || '') + '">' + medals[i] + '</span><span class="leaderboard-mini-name">' + u.name + title + '</span><span class="leaderboard-mini-time">' + u.time + '</span></div>';
+  }).join('');
+}
+
+function renderRanking(type, metric, data) {
+  const container = document.getElementById('ranking-' + type);
+  if (!data) { container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:40px;">ไม่มีข้อมูล</div>'; return; }
+  
+  const bestMedals = ['🥇', '🥈', '🥉'];
+  let html = '';
+  
+  // BEST
+  html += '<div class="ranking-section"><div class="ranking-title">🟢 BEST (' + metric + ')</div><div class="ranking-list">';
+  if (data.best && data.best.length > 0) {
+    data.best.slice(0, 3).forEach((item, i) => {
+      const id = type + '-best-' + i;
+      html += '<div class="ranking-item best"><div class="ranking-item-header"><div class="ranking-item-left"><span class="ranking-star">' + bestMedals[i] + '</span></div><span class="ranking-value best">' + item.result + '</span></div><div class="ranking-campaign">' + item.campaign + '</div><button class="copy-btn" id="' + id + '" onclick="copyCampaign(\'' + item.campaign.replace(/'/g, "\\'") + '\', this)">📋 Copy</button></div>';
+    });
+  } else { html += '<div style="color:var(--text-muted);padding:10px;">ไม่มีข้อมูล</div>'; }
+  html += '</div></div>';
+  
+  // WORST
+  html += '<div class="ranking-section"><div class="ranking-title">🔴 WORST (' + metric + ')</div><div class="ranking-list">';
+  if (data.worst && data.worst.length > 0) {
+    data.worst.slice(0, 3).forEach((item, i) => {
+      const id = type + '-worst-' + i;
+      html += '<div class="ranking-item worst"><div class="ranking-item-header"><div class="ranking-item-left"><span class="ranking-star">#' + (i+1) + '</span></div><span class="ranking-value worst">' + item.result + '</span></div><div class="ranking-campaign">' + item.campaign + '</div><button class="copy-btn" id="' + id + '" onclick="copyCampaign(\'' + item.campaign.replace(/'/g, "\\'") + '\', this)">📋 Copy</button></div>';
+    });
+  } else { html += '<div style="color:var(--text-muted);padding:10px;">ไม่มีข้อมูล</div>'; }
+  html += '</div></div>';
+  
+  container.innerHTML = html;
+}
+
+function updateMotivation(done, total) {
+  const box = document.getElementById('motivationBox');
+  let emoji = '💪', text = 'มาลุยกันเถอะ!';
+  if (done === total) { emoji = '🎉'; text = 'เสร็จหมดแล้ว!'; box.style.background = 'linear-gradient(135deg, #00b894 0%, #55efc4 100%)'; }
+  else if (done >= total * 0.75) { emoji = '🔥'; text = 'ใกล้แล้ว! อีกนิดเดียว!'; }
+  else if (done >= total * 0.5) { emoji = '💪'; text = 'ผ่านครึ่งทางแล้ว!'; }
+  box.innerHTML = '<div class="motivation-emoji">' + emoji + '</div><div class="motivation-text">' + text + '</div><div class="motivation-sub">ทำเสร็จ ' + done + '/' + total + ' รายการ</div>';
+}
+
+// === SIMULATOR ===
+let mtkStatus = { linen: 'pending', holiday: 'pending', denim: 'pending', masterpiece: 'pending' };
+let arpStatus = { linen: 'pending', holiday: 'pending', denim: 'pending', masterpiece: 'pending' };
+
+function countDone(o) { return Object.values(o).filter(s => s === 'done').length; }
+function isAllDone() { return countDone(mtkStatus) === 4 && countDone(arpStatus) === 4; }
+
+function getStatusText(sys) {
+  const o = sys === 'mtk' ? mtkStatus : arpStatus;
+  return Object.entries(o).map(([n, s]) => (s === 'done' ? '🟢' : '🟠') + ' ' + n.charAt(0).toUpperCase() + n.slice(1) + ' : ' + (s === 'done' ? 'Done' : 'Pending')).join('\n');
+}
+
+function getFullStatus() {
+  return '📊 MK (' + countDone(mtkStatus) + '/4)\n' + getStatusText('mtk') + '\n\n📊 AW (' + countDone(arpStatus) + '/4)\n' + getStatusText('arp');
+}
+
+function updateSimStatus() {
+  Object.entries(mtkStatus).forEach(([n, s]) => { const el = document.getElementById('sim-mtk-' + n); if (el) { el.textContent = s === 'done' ? 'Done' : 'Pending'; el.className = 'value ' + s; } });
+  Object.entries(arpStatus).forEach(([n, s]) => { const el = document.getElementById('sim-arp-' + n); if (el) { el.textContent = s === 'done' ? 'Done' : 'Pending'; el.className = 'value ' + s; } });
+}
+
+function resetSim() {
+  mtkStatus = { linen: 'pending', holiday: 'pending', denim: 'pending', masterpiece: 'pending' };
+  arpStatus = { linen: 'pending', holiday: 'pending', denim: 'pending', masterpiece: 'pending' };
+  updateSimStatus();
+}
+
+function addMsg(text, isUser) {
+  const area = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = 'message ' + (isUser ? 'user' : 'bot');
+  div.innerHTML = isUser ? text : '<div class="bot-name">UQ Buddy</div><span class="mention-tag">@' + currentUserName + '</span>\n' + text;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function showTyping() {
+  const area = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = 'typing-indicator';
+  div.id = 'typing';
+  div.innerHTML = '<span></span><span></span><span></span>';
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function hideTyping() { const t = document.getElementById('typing'); if (t) t.remove(); }
+
+function processCmd(text) {
+  const lower = text.toLowerCase().trim();
+  if (lower === 'report = status') return 'สถานะล่าสุด 👇\n\n' + getFullStatus();
+  if (lower === 'report = reset') { resetSim(); return '🔄 รีเซ็ตเรียบร้อย ✨'; }
+
+  const match = lower.match(/(mk|aw)\s+(.+)\s*=\s*done/);
+  if (match) {
+    const sys = match[1] === 'mk' ? 'mtk' : 'arp';
+    const sysName = sys === 'mtk' ? 'MK' : 'AW';
+    const obj = sys === 'mtk' ? mtkStatus : arpStatus;
+    const camps = match[2].split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+    const updated = [];
+    camps.forEach(c => {
+      if (obj[c] !== undefined) { obj[c] = 'done'; updated.push(c); }
+      else { const k = Object.keys(obj).find(k => k.includes(c) || c.includes(k)); if (k) { obj[k] = 'done'; updated.push(k); } }
+    });
+    updateSimStatus();
+    if (updated.length > 0) {
+      if (isAllDone()) return '✅ อัปเดต ' + sysName + ':\n' + updated.map(n => '• ' + n).join('\n') + '\n\n🎉 เสร็จหมดแล้ว! 👕🙂';
+      return '✅ อัปเดต ' + sysName + ':\n' + updated.map(n => '• ' + n).join('\n') + '\n\n' + getFullStatus();
+    }
+  }
+  return null;
+}
+
+function sendMessage() {
+  const input = document.getElementById('messageInput');
+  const text = input.value.trim();
+  if (!text) return;
+  addMsg(text, true);
+  input.value = '';
+  showTyping();
+  setTimeout(() => { hideTyping(); const r = processCmd(text); if (r) addMsg(r, false); }, 800);
+}
+
+function sendQuickCmd(cmd) { document.getElementById('messageInput').value = cmd; sendMessage(); }
+
+function clearChat() { document.getElementById('chatArea').innerHTML = ''; resetSim(); }
+
+function runScenario(type) {
+  clearChat();
+  if (type === 'morning') setTimeout(() => addMsg('☀️ สวัสดีตอนเช้าครับ\n\n📌 งานวันนี้\n📊 AW → shorturl.asia/NQqVt\n📊 MK → shorturl.asia/viFxd\n\n⏰ Deadline 14:00\n\n' + getFullStatus(), false), 500);
+  if (type === 'update') { setTimeout(() => addMsg('aw linen,holiday = done', true), 300); setTimeout(() => showTyping(), 600); setTimeout(() => { hideTyping(); arpStatus.linen = 'done'; arpStatus.holiday = 'done'; updateSimStatus(); addMsg('✅ อัปเดต AW:\n• linen\n• holiday\n\n' + getFullStatus(), false); }, 1500); }
+  if (type === 'alldone') { mtkStatus = { linen: 'done', holiday: 'done', denim: 'done', masterpiece: 'done' }; arpStatus = { linen: 'done', holiday: 'done', denim: 'done', masterpiece: 'pending' }; updateSimStatus(); setTimeout(() => addMsg('aw masterpiece = done', true), 300); setTimeout(() => showTyping(), 600); setTimeout(() => { hideTyping(); arpStatus.masterpiece = 'done'; updateSimStatus(); addMsg('✅ อัปเดต AW:\n• masterpiece\n\n🎉 เสร็จหมดแล้ว! 👕🙂', false); }, 1500); }
+}
+
+// === INIT ===
+setInterval(() => { if (apiUrl) refreshData(); }, 30000);
+refreshData();
+setTimeout(() => addMsg('สวัสดีครับ! 👋\n\nผมคือ UQ Buddy\n\nลองพิมพ์ "report = status" หรือกดปุ่มด้านขวาได้เลย 🙂', false), 500);
+  </script>
+</body>
+</html>
