@@ -395,7 +395,7 @@
               </div>
             </div>
             <button class="submit-star-btn" onclick="submitStarRequest()" id="submitStarBtn" disabled>
-              📨 ส่งขอดาวไป LINE
+              ⭐ ส่งขอดาว + เพิ่มใน Slides
             </button>
           </div>
         </div>
@@ -848,6 +848,12 @@ async function submitStarRequest() {
     return;
   }
   
+  // Show loading
+  const btn = document.getElementById('submitStarBtn');
+  const originalText = btn.textContent;
+  btn.textContent = '⏳ กำลังดำเนินการ...';
+  btn.disabled = true;
+  
   // Build message
   let message = '⭐ ขอดาวเขียว และ ดาวแดงตามแคมเปญนี้หน่อยนะครับ\n\n';
   
@@ -864,29 +870,54 @@ async function submitStarRequest() {
     selectedWorst.forEach(i => {
       message += `• ${i.campaign}\n  → ${i.result}\n`;
     });
+    message += '\n';
   }
   
-  // Send to LINE via API
+  message += '⭐ ทำ Note ดาวเขียว และ ดาวแดงให้แล้วนะครับ\n✅ เพิ่มลงใน Slides แล้ว!';
+  
   try {
-    const params = new URLSearchParams({
+    // 1. Add stars to slides
+    const bestCampaigns = selectedBest.map(i => i.campaign);
+    const worstCampaigns = selectedWorst.map(i => i.campaign);
+    
+    const starsParams = new URLSearchParams({
+      action: 'addStars',
+      best: JSON.stringify(bestCampaigns),
+      worst: JSON.stringify(worstCampaigns)
+    });
+    
+    // Fire and forget - add stars
+    const starsImg = new Image();
+    starsImg.src = API_URL + '?' + starsParams.toString();
+    
+    // 2. Send LINE message
+    const lineParams = new URLSearchParams({
       action: 'sendStarRequest',
       message: message
     });
     
-    const img = new Image();
-    img.onload = img.onerror = () => {
-      showToast('✅ ส่งขอดาวไป LINE แล้ว!');
+    const lineImg = new Image();
+    lineImg.onload = lineImg.onerror = () => {
+      showToast('✅ ส่งขอดาว + เพิ่มใน Slides แล้ว!');
+      btn.textContent = originalText;
+      btn.disabled = false;
+      
       // Clear selections
       document.querySelectorAll('.campaign-checkbox input:checked').forEach(cb => cb.checked = false);
       updateStarSelection();
     };
-    img.src = API_URL + '?' + params.toString();
+    lineImg.src = API_URL + '?' + lineParams.toString();
     
   } catch (e) {
-    console.error('Failed to send star request:', e);
-    showToast('⚠️ ส่งไม่สำเร็จ');
+    console.error('Failed:', e);
+    showToast('⚠️ ดำเนินการไม่สำเร็จ');
+    btn.textContent = originalText;
+    btn.disabled = false;
   }
 }
+
+// Remove unused function
+
 
 // === SIMULATOR ===
 let mtkStatus = { linen: 'pending', holiday: 'pending', denim: 'pending', masterpiece: 'pending' };
