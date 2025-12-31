@@ -214,6 +214,30 @@
     .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--accent-green); color: white; padding: 0.6rem 1.25rem; border-radius: 6px; font-size: 0.85rem; font-weight: 500; z-index: 9999; opacity: 0; transition: all 0.3s ease; }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     
+    /* Star Request Section */
+    .star-request-section { margin-top: 1.5rem; padding: 1rem; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05)); border: 1px solid rgba(255,215,0,0.3); border-radius: 10px; }
+    .star-request-section h3 { margin: 0 0 0.5rem 0; font-size: 1rem; color: #ffd700; }
+    .star-desc { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 1rem; }
+    .selected-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+    .selected-box { padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.2); }
+    .selected-box.best { border-left: 3px solid var(--accent-green); }
+    .selected-box.worst { border-left: 3px solid var(--accent-red); }
+    .selected-box h4 { font-size: 0.8rem; margin: 0 0 0.5rem 0; }
+    .selected-box div { font-size: 0.7rem; color: var(--text-secondary); }
+    .selected-box .selected-item { color: white; padding: 0.2rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .selected-box .selected-item:last-child { border-bottom: none; }
+    .submit-star-btn { width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #ffd700, #ffaa00); border: none; border-radius: 8px; color: #000; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .submit-star-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255,215,0,0.3); }
+    .submit-star-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    /* Campaign checkbox */
+    .campaign-checkbox { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(255,255,255,0.05); border-radius: 6px; margin-bottom: 0.4rem; cursor: pointer; transition: all 0.2s; }
+    .campaign-checkbox:hover { background: rgba(255,255,255,0.1); }
+    .campaign-checkbox input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+    .campaign-checkbox.checked { background: rgba(255,215,0,0.15); border: 1px solid rgba(255,215,0,0.3); }
+    .campaign-checkbox .camp-name { flex: 1; font-size: 0.7rem; word-break: break-all; }
+    .campaign-checkbox .camp-result { font-size: 0.7rem; color: var(--accent-blue); }
+    
     .footer { text-align: center; padding: 1rem; color: var(--text-secondary); font-size: 0.7rem; }
   </style>
 </head>
@@ -354,6 +378,25 @@
               <div class="summary-section"><h4 class="best">🏆 Top 3 Best (CPM)</h4><div id="awareness-best"></div></div>
               <div class="summary-section"><h4 class="worst">⚠️ Top 3 Worst (CPM)</h4><div id="awareness-worst"></div></div>
             </div>
+          </div>
+          
+          <!-- Star Request Section -->
+          <div class="star-request-section">
+            <h3>⭐ ขอดาวเขียว / ดาวแดง</h3>
+            <p class="star-desc">เลือก Campaign ที่ต้องการขอดาว แล้วกด Submit</p>
+            <div class="selected-summary">
+              <div class="selected-box best">
+                <h4>⭐🟢 ดาวเขียว (Best)</h4>
+                <div id="selectedBest">ยังไม่ได้เลือก</div>
+              </div>
+              <div class="selected-box worst">
+                <h4>⭐🔴 ดาวแดง (Worst)</h4>
+                <div id="selectedWorst">ยังไม่ได้เลือก</div>
+              </div>
+            </div>
+            <button class="submit-star-btn" onclick="submitStarRequest()" id="submitStarBtn" disabled>
+              📨 ส่งขอดาวไป LINE
+            </button>
           </div>
         </div>
       </div>
@@ -725,23 +768,124 @@ function render(data) {
     document.getElementById('below-awareness').textContent = '⚠️ Below Average: ' + data.belowStats.awareness + ' campaigns' + (data.belowStats.awareness === 0 ? ' (นับรวมทั้งหมด)' : '');
   }
   
-  // Summary
+  // Summary with checkboxes
   if (data.summary) {
+    window.summaryData = data.summary; // Store for later use
     ['traffic', 'vdo', 'awareness'].forEach(type => {
       const s = data.summary[type];
       if (s) {
-        document.getElementById(type + '-best').innerHTML = (s.best || []).slice(0, 3).map(item => 
-          `<div class="summary-item best-item"><div class="summary-item-header"><span class="rank r${item.rank}">#${item.rank}</span><span class="result">${item.result}</span></div><div class="campaign-full">${item.campaign}</div><button class="copy-btn" onclick="copyCampaign('${item.campaign.replace(/'/g, "\\'")}', this)">📋</button></div>`
+        document.getElementById(type + '-best').innerHTML = (s.best || []).slice(0, 3).map((item, idx) => 
+          `<label class="campaign-checkbox" onclick="event.stopPropagation()">
+            <input type="checkbox" data-type="${type}" data-category="best" data-campaign="${item.campaign.replace(/"/g, '&quot;')}" data-result="${item.result}" onchange="updateStarSelection()">
+            <span class="camp-name">${item.campaign}</span>
+            <span class="camp-result">${item.result}</span>
+          </label>`
         ).join('') || '<div style="color:var(--text-secondary);">ไม่มีข้อมูล</div>';
         
-        document.getElementById(type + '-worst').innerHTML = (s.worst || []).slice(0, 3).map(item => 
-          `<div class="summary-item worst-item"><div class="summary-item-header"><span class="rank r${item.rank}">#${item.rank}</span><span class="result">${item.result}</span></div><div class="campaign-full">${item.campaign}</div><button class="copy-btn" onclick="copyCampaign('${item.campaign.replace(/'/g, "\\'")}', this)">📋</button></div>`
+        document.getElementById(type + '-worst').innerHTML = (s.worst || []).slice(0, 3).map((item, idx) => 
+          `<label class="campaign-checkbox" onclick="event.stopPropagation()">
+            <input type="checkbox" data-type="${type}" data-category="worst" data-campaign="${item.campaign.replace(/"/g, '&quot;')}" data-result="${item.result}" onchange="updateStarSelection()">
+            <span class="camp-name">${item.campaign}</span>
+            <span class="camp-result">${item.result}</span>
+          </label>`
         ).join('') || '<div style="color:var(--text-secondary);">ไม่มีข้อมูล</div>';
       }
     });
   }
   
   document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('th-TH');
+}
+
+// === STAR REQUEST ===
+let selectedBest = [];
+let selectedWorst = [];
+
+function updateStarSelection() {
+  selectedBest = [];
+  selectedWorst = [];
+  
+  document.querySelectorAll('.campaign-checkbox input:checked').forEach(cb => {
+    const campaign = cb.dataset.campaign;
+    const result = cb.dataset.result;
+    const category = cb.dataset.category;
+    const item = { campaign, result };
+    
+    if (category === 'best') {
+      selectedBest.push(item);
+    } else {
+      selectedWorst.push(item);
+    }
+    
+    cb.closest('.campaign-checkbox').classList.add('checked');
+  });
+  
+  document.querySelectorAll('.campaign-checkbox input:not(:checked)').forEach(cb => {
+    cb.closest('.campaign-checkbox').classList.remove('checked');
+  });
+  
+  // Update display
+  document.getElementById('selectedBest').innerHTML = selectedBest.length > 0 
+    ? selectedBest.map(i => `<div class="selected-item">• ${i.campaign.substring(0, 50)}...</div>`).join('') 
+    : 'ยังไม่ได้เลือก';
+    
+  document.getElementById('selectedWorst').innerHTML = selectedWorst.length > 0 
+    ? selectedWorst.map(i => `<div class="selected-item">• ${i.campaign.substring(0, 50)}...</div>`).join('') 
+    : 'ยังไม่ได้เลือก';
+  
+  // Enable/disable submit button
+  const hasSelection = selectedBest.length > 0 || selectedWorst.length > 0;
+  document.getElementById('submitStarBtn').disabled = !hasSelection;
+}
+
+async function submitStarRequest() {
+  if (selectedBest.length === 0 && selectedWorst.length === 0) {
+    showToast('⚠️ กรุณาเลือก Campaign ก่อน');
+    return;
+  }
+  
+  if (!API_URL) {
+    showToast('⚠️ กรุณาตั้งค่า API URL ก่อน');
+    return;
+  }
+  
+  // Build message
+  let message = '⭐ ขอดาวเขียว และ ดาวแดงตามแคมเปญนี้หน่อยนะครับ\n\n';
+  
+  if (selectedBest.length > 0) {
+    message += '⭐🟢 ดาวเขียว (Best)\n';
+    selectedBest.forEach(i => {
+      message += `• ${i.campaign}\n  → ${i.result}\n`;
+    });
+    message += '\n';
+  }
+  
+  if (selectedWorst.length > 0) {
+    message += '⭐🔴 ดาวแดง (Worst)\n';
+    selectedWorst.forEach(i => {
+      message += `• ${i.campaign}\n  → ${i.result}\n`;
+    });
+  }
+  
+  // Send to LINE via API
+  try {
+    const params = new URLSearchParams({
+      action: 'sendStarRequest',
+      message: message
+    });
+    
+    const img = new Image();
+    img.onload = img.onerror = () => {
+      showToast('✅ ส่งขอดาวไป LINE แล้ว!');
+      // Clear selections
+      document.querySelectorAll('.campaign-checkbox input:checked').forEach(cb => cb.checked = false);
+      updateStarSelection();
+    };
+    img.src = API_URL + '?' + params.toString();
+    
+  } catch (e) {
+    console.error('Failed to send star request:', e);
+    showToast('⚠️ ส่งไม่สำเร็จ');
+  }
 }
 
 // === SIMULATOR ===
