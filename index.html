@@ -584,26 +584,27 @@ async function toggleFriend(sys, name) {
   friendsStatus[sys][name] = newStatus;
   renderFriends();
   
-  // Sync with Google Sheet via API
+  // Sync with Google Sheet via API (ใช้ GET เพื่อหลีก CORS)
   if (API_URL) {
     try {
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'updateFriend',
-          system: sys,
-          friend: name,
-          status: newStatus ? 'Done' : 'Pending'
-        })
+      const params = new URLSearchParams({
+        action: 'updateFriend',
+        system: sys,
+        friend: name,
+        status: newStatus ? 'Done' : 'Pending'
       });
+      
+      const response = await fetch(API_URL + '?' + params.toString());
       const result = await response.json();
+      
       if (result.success) {
         showToast(newStatus ? '✅ บันทึก ' + (name === 'mdg' ? 'ModernDuck' : 'Neon') + ' แล้ว!' : '🔄 เปลี่ยนเป็น Pending แล้ว!');
+      } else {
+        showToast('⚠️ ' + (result.error || 'บันทึกไม่สำเร็จ'));
       }
     } catch (e) {
       console.error('Failed to sync friend status:', e);
-      showToast('⚠️ บันทึกไม่สำเร็จ (offline mode)');
+      showToast('⚠️ บันทึกไม่สำเร็จ');
     }
   }
 }
