@@ -54,19 +54,35 @@
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     
     /* Challenge Banner */
-    .challenge-banner { background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(245,158,11,0.2)); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-    .challenge-banner.next { background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(59,130,246,0.15)); }
-    .challenge-left h2 { font-size: 1.1rem; margin-bottom: 0.3rem; }
+    .challenge-banner { background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(245,158,11,0.2)); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .challenge-banner.next { background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(59,130,246,0.2)); border: 1px solid rgba(139,92,246,0.3); }
+    .challenge-banner.next .time-display { color: #a78bfa; }
+    .challenge-left h2 { font-size: 1.2rem; margin-bottom: 0.3rem; }
     .challenge-left p { font-size: 0.85rem; color: var(--text-secondary); }
-    .challenge-right { text-align: center; }
-    .time-display { font-size: 1.8rem; font-weight: 700; color: var(--accent-gold); }
-    .time-label { font-size: 0.75rem; color: var(--text-secondary); }
+    .challenge-left .next-info { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.3rem; opacity: 0.8; }
+    .challenge-stats { display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.8rem; }
+    .challenge-stats .stat-item { color: var(--text-secondary); }
+    .challenge-stats .stat-item span { color: var(--accent-gold); font-weight: 600; }
+    .challenge-right { text-align: center; min-width: 100px; }
+    .time-display { font-size: 2rem; font-weight: 700; color: var(--accent-gold); }
+    .time-label { font-size: 0.8rem; color: var(--text-secondary); }
+    
+    /* LINE Quota */
+    .line-quota { display: flex; align-items: center; gap: 0.5rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.5rem 1rem; margin-bottom: 1rem; font-size: 0.75rem; }
+    .quota-icon { font-size: 1rem; }
+    .quota-text { color: var(--text-secondary); }
+    .quota-text span { color: var(--accent-gold); font-weight: 600; }
+    .quota-bar { flex: 1; height: 6px; background: var(--bg-tertiary); border-radius: 3px; overflow: hidden; max-width: 150px; }
+    .quota-fill { height: 100%; background: linear-gradient(90deg, #22c55e, #eab308); transition: width 0.3s; }
     
     /* Stats Row */
-    .stats-row { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center; }
+    .stats-row { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center; align-items: stretch; }
     .stat-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 0.6rem 1rem; text-align: center; min-width: 90px; }
     .stat-card .value { font-size: 1.3rem; font-weight: 700; color: var(--accent-gold); }
     .stat-card .label { font-size: 0.7rem; color: var(--text-secondary); }
+    .stat-card.progress-main { min-width: 120px; padding: 1rem 1.5rem; background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(59,130,246,0.15)); border: 2px solid rgba(34,197,94,0.3); }
+    .stat-card.progress-main .value { font-size: 2rem; }
+    .stat-card.progress-main .label { font-size: 0.85rem; font-weight: 600; }
     
     /* Grid */
     .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; }
@@ -120,6 +136,35 @@
     .badge-item .icon { font-size: 1.3rem; }
     .badge-item .label { font-size: 0.65rem; color: var(--text-secondary); margin: 0.2rem 0; }
     .badge-item .count { font-size: 1.1rem; font-weight: 700; color: var(--accent-gold); }
+    
+    /* Hall of Fame Ranking */
+    .hof-ranking { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); }
+    .hof-title { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem; }
+    .hof-list { display: flex; flex-direction: column; gap: 0.3rem; }
+    .hof-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(255,255,255,0.02); border-radius: 6px; font-size: 0.75rem; }
+    .hof-rank { width: 20px; font-weight: 700; color: var(--accent-gold); }
+    .hof-rank.gold { color: #fbbf24; }
+    .hof-rank.silver { color: #94a3b8; }
+    .hof-rank.bronze { color: #cd7f32; }
+    .hof-name { flex: 1; }
+    .hof-title-badge { font-size: 0.7rem; }
+    .hof-badges { display: flex; gap: 0.3rem; font-size: 0.7rem; color: var(--text-secondary); }
+    
+    /* Submit Time Chart */
+    .submit-chart-info { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem; }
+    .submit-charts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 0.5rem; }
+    @media (max-width: 768px) { .submit-charts-grid { grid-template-columns: 1fr; } }
+    .submit-chart-card { background: rgba(255,255,255,0.02); border-radius: 8px; padding: 0.75rem; }
+    .chart-title { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem; }
+    .chart-avg { font-size: 0.7rem; color: var(--accent-gold); margin-bottom: 0.5rem; }
+    .submit-chart { display: flex; gap: 3px; align-items: flex-end; height: 80px; padding: 0.5rem 0; overflow-x: auto; }
+    .submit-bar { flex: 1; min-width: 35px; max-width: 50px; background: linear-gradient(to top, #22c55e, #4ade80); border-radius: 3px 3px 0 0; position: relative; transition: all 0.3s; cursor: pointer; }
+    .submit-bar:hover { opacity: 0.8; transform: scaleY(1.02); }
+    .submit-bar.late { background: linear-gradient(to top, #ef4444, #f87171); }
+    .submit-bar-label { position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); font-size: 0.55rem; color: var(--text-secondary); white-space: nowrap; }
+    .submit-bar-time { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 0.55rem; color: var(--accent-gold); white-space: nowrap; display: none; }
+    .submit-bar:hover .submit-bar-time { display: block; }
+    .chart-unit { font-size: 0.65rem; color: var(--text-secondary); text-align: center; margin-top: 0.5rem; }
     
     /* Summary Tabs */
     .summary-tabs { display: flex; gap: 0.4rem; margin-bottom: 1rem; }
@@ -231,12 +276,12 @@
     .submit-star-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     
     /* Campaign checkbox */
-    .campaign-checkbox { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(255,255,255,0.05); border-radius: 6px; margin-bottom: 0.4rem; cursor: pointer; transition: all 0.2s; }
+    .campaign-checkbox { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.5rem 0.6rem; background: rgba(255,255,255,0.05); border-radius: 6px; margin-bottom: 0.4rem; cursor: pointer; transition: all 0.2s; }
     .campaign-checkbox:hover { background: rgba(255,255,255,0.1); }
-    .campaign-checkbox input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+    .campaign-checkbox input[type="checkbox"] { width: 16px; height: 16px; min-width: 16px; cursor: pointer; margin-top: 2px; }
     .campaign-checkbox.checked { background: rgba(255,215,0,0.15); border: 1px solid rgba(255,215,0,0.3); }
-    .campaign-checkbox .camp-name { flex: 1; font-size: 0.7rem; word-break: break-all; }
-    .campaign-checkbox .camp-result { font-size: 0.7rem; color: var(--accent-blue); }
+    .campaign-checkbox .camp-name { flex: 1; font-size: 0.7rem; word-break: break-word; line-height: 1.4; }
+    .campaign-checkbox .camp-result { font-size: 0.7rem; color: var(--accent-blue); white-space: nowrap; margin-left: 0.5rem; }
     
     .footer { text-align: center; padding: 1rem; color: var(--text-secondary); font-size: 0.7rem; }
   </style>
@@ -273,6 +318,11 @@
         <div class="challenge-left">
           <h2 id="challengeTitle">🔥 Challenge วันนี้!</h2>
           <p id="challengeDesc">ทำให้เสร็จก่อน 14:00</p>
+          <div class="next-info" id="nextInfo" style="display:none;">📌 เป้าหมาย: Submit MK+AW ให้เสร็จก่อนบ่าย 2</div>
+          <div class="challenge-stats" id="challengeStats" style="display:none;">
+            <span class="stat-item">📊 MK: <span id="chMkStatus">-</span></span>
+            <span class="stat-item">📊 AW: <span id="chAwStatus">-</span></span>
+          </div>
         </div>
         <div class="challenge-right">
           <div class="time-display" id="timeDisplay">--:--:--</div>
@@ -280,8 +330,15 @@
         </div>
       </div>
 
+      <!-- LINE Quota -->
+      <div class="line-quota" id="lineQuotaSection">
+        <span class="quota-icon">💬</span>
+        <span class="quota-text">LINE: เหลือ <span id="lineRemaining" style="color:#22c55e;font-weight:700;">300</span> / <span id="lineLimit">300</span> msg</span>
+        <div class="quota-bar"><div class="quota-fill" id="quotaFill" style="width:0%"></div></div>
+      </div>
+
       <div class="stats-row">
-        <div class="stat-card"><div class="value" id="totalProgress">-</div><div class="label">Progress</div></div>
+        <div class="stat-card progress-main"><div class="value" id="totalProgress">-</div><div class="label">Progress</div></div>
         <div class="stat-card"><div class="value" id="streakCount">0</div><div class="label">🔥 Streak</div></div>
         <div class="stat-card"><div class="value" id="totalFast">0</div><div class="label">⚡ มือไว</div></div>
         <div class="stat-card"><div class="value" id="totalCarry">0</div><div class="label">🏋️ เดอะแบก</div></div>
@@ -340,7 +397,51 @@
               <div class="badge-item"><div class="icon">🎯</div><div class="label">ครบถ้วน</div><div class="count" id="badgeComplete">0</div></div>
               <div class="badge-item"><div class="icon">🏋️</div><div class="label">เดอะแบก</div><div class="count" id="badgeCarry">0</div></div>
             </div>
+            
+            <!-- Hall of Fame Ranking -->
+            <div class="hof-ranking" id="hofRanking">
+              <div class="hof-title">🏆 Member Rankings</div>
+              <div class="hof-list" id="hofList">
+                <!-- จะถูก populate โดย JavaScript -->
+              </div>
+            </div>
           </div>
+        </div>
+      </div>
+      
+      <!-- Submit Time Charts (Full Width) -->
+      <div class="card" style="margin-top: 1rem;">
+        <div class="card-header">📊 Submit Time History (จันทร์ & ศุกร์)</div>
+        <div class="card-body">
+          <div class="submit-chart-info">
+            <span>🎯 Target: 14:00 | <span style="color:#22c55e;">■</span> ก่อนเวลา <span style="color:#ef4444;">■</span> หลังเวลา</span>
+          </div>
+          
+          <!-- 3 Charts Grid -->
+          <div class="submit-charts-grid">
+            <!-- AW Chart -->
+            <div class="submit-chart-card">
+              <div class="chart-title">📊 AW (Priority: ก่อน 14:00)</div>
+              <div class="chart-avg">Avg: <span id="avgAwTime">--:--</span></div>
+              <div class="submit-chart" id="submitChartAw"></div>
+            </div>
+            
+            <!-- MK Chart -->
+            <div class="submit-chart-card">
+              <div class="chart-title">📊 MK (ดูเวลาจบ)</div>
+              <div class="chart-avg">Avg: <span id="avgMkTime">--:--</span></div>
+              <div class="submit-chart" id="submitChartMk"></div>
+            </div>
+            
+            <!-- Both Chart -->
+            <div class="submit-chart-card">
+              <div class="chart-title">✅ รวม (ทั้ง 2 ระบบ)</div>
+              <div class="chart-avg">Avg: <span id="avgBothTime">--:--</span></div>
+              <div class="submit-chart" id="submitChartBoth"></div>
+            </div>
+          </div>
+          
+          <div class="chart-unit">หน่วย: เวลา (ชั่วโมง:นาที)</div>
         </div>
       </div>
     </div>
@@ -554,10 +655,12 @@ function updateChallenge() {
   const desc = document.getElementById('challengeDesc');
   const display = document.getElementById('timeDisplay');
   const label = document.getElementById('timeLabel');
+  const nextInfo = document.getElementById('nextInfo');
 
   if (day === 5 || day === 1) {
     const dayName = day === 5 ? 'ศุกร์' : 'จันทร์';
     const deadline = new Date(); deadline.setHours(14, 0, 0, 0);
+    nextInfo.style.display = 'none';
     
     if (now >= deadline) {
       banner.classList.add('next');
@@ -568,7 +671,7 @@ function updateChallenge() {
     } else {
       banner.classList.remove('next');
       title.textContent = '🔥 Challenge วัน' + dayName + '!';
-      desc.textContent = 'ทำให้เสร็จก่อน 14:00';
+      desc.textContent = 'Submit MK+AW ก่อน 14:00 เพื่อรับ Badge!';
       const diff = deadline - now;
       const h = Math.floor(diff / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
@@ -583,7 +686,8 @@ function updateChallenge() {
     const daysToMon = (1 - day + 7) % 7 || 7;
     const nextDays = Math.min(daysToFri, daysToMon);
     const nextDayName = nextDays === daysToFri ? 'ศุกร์' : 'จันทร์';
-    desc.textContent = 'เตรียมตัวให้พร้อม!';
+    desc.textContent = 'วัน' + nextDayName + ' จะมี Challenge!';
+    nextInfo.style.display = 'block';
     display.textContent = nextDays + ' วัน';
     label.textContent = 'ถึงวัน' + nextDayName;
   }
@@ -690,6 +794,25 @@ function loadDemo() {
     badges: { totalFast: 4, totalEarly: 3, totalComplete: 1, totalCarry: 2 },
     streak: 3,
     belowStats: { traffic: 2, vdo: 3, awareness: 1 },
+    lineQuota: { used: 45, limit: 300, remaining: 255 },
+    hallOfFame: [
+      { name: 'หอกอ', title: '🌟ดาวรุ่งรีพอร์ท', fast: 3, early: 2, complete: 1, carry: 2, total: 8 },
+      { name: 'พี่เบนซ์', title: '', fast: 1, early: 1, complete: 0, carry: 0, total: 2 },
+      { name: 'น้องนิว', title: '', fast: 0, early: 1, complete: 1, carry: 1, total: 3 }
+    ],
+    submitTimeStats: {
+      weeks: [
+        { week: 1, date: '2024-12-06', day: 'Friday', awTime: '13:30:00', awHour: 13.5, mkTime: '13:45:00', mkHour: 13.75, bothTime: '13:45:00', bothHour: 13.75 },
+        { week: 1, date: '2024-12-09', day: 'Monday', awTime: '14:10:00', awHour: 14.17, mkTime: '14:30:00', mkHour: 14.5, bothTime: '14:30:00', bothHour: 14.5 },
+        { week: 2, date: '2024-12-13', day: 'Friday', awTime: '13:00:00', awHour: 13, mkTime: '13:20:00', mkHour: 13.33, bothTime: '13:20:00', bothHour: 13.33 },
+        { week: 2, date: '2024-12-16', day: 'Monday', awTime: '14:50:00', awHour: 14.83, mkTime: '15:10:00', mkHour: 15.17, bothTime: '15:10:00', bothHour: 15.17 },
+        { week: 3, date: '2024-12-20', day: 'Friday', awTime: '12:40:00', awHour: 12.67, mkTime: '12:55:00', mkHour: 12.92, bothTime: '12:55:00', bothHour: 12.92 },
+        { week: 3, date: '2024-12-23', day: 'Monday', awTime: '13:20:00', awHour: 13.33, mkTime: '13:40:00', mkHour: 13.67, bothTime: '13:40:00', bothHour: 13.67 },
+        { week: 4, date: '2024-12-27', day: 'Friday', awTime: '13:50:00', awHour: 13.83, mkTime: '14:05:00', mkHour: 14.08, bothTime: '14:05:00', bothHour: 14.08 },
+        { week: 4, date: '2024-12-30', day: 'Monday', awTime: '13:00:00', awHour: 13, mkTime: '13:15:00', mkHour: 13.25, bothTime: '13:15:00', bothHour: 13.25 }
+      ],
+      target: 14
+    },
     summary: {
       traffic: {
         best: [{ rank: 1, campaign: 'Uniqlo_LO_Meta_[POST 3]_SNS_Traffic_191225-221225_CPC_1-4_129000_2025122892', result: 'CTR 2.35%' }, { rank: 2, campaign: 'Uniqlo_Holiday_Meta_[SNS #6]_SNS_Traffic_221225-311225', result: 'CTR 1.59%' }, { rank: 3, campaign: 'Uniqlo_Holiday_Meta_[SNS #7]_SNS_Traffic_231225-311225', result: 'CTR 1.39%' }],
@@ -760,6 +883,97 @@ function render(data) {
   document.getElementById('badgeEarly').textContent = data.badges?.totalEarly || 0;
   document.getElementById('badgeComplete').textContent = data.badges?.totalComplete || 0;
   document.getElementById('badgeCarry').textContent = data.badges?.totalCarry || 0;
+  
+  // Hall of Fame Ranking
+  if (data.hallOfFame && data.hallOfFame.length > 0) {
+    document.getElementById('hofList').innerHTML = data.hallOfFame.slice(0, 5).map((u, i) => {
+      const rankClass = i === 0 ? 'gold' : (i === 1 ? 'silver' : (i === 2 ? 'bronze' : ''));
+      return `<div class="hof-row">
+        <span class="hof-rank ${rankClass}">${i + 1}</span>
+        <span class="hof-name">${u.name}</span>
+        <span class="hof-title-badge">${u.title || ''}</span>
+        <span class="hof-badges">⚡${u.fast} 🔥${u.early} 🏋️${u.carry}</span>
+      </div>`;
+    }).join('');
+  } else {
+    document.getElementById('hofList').innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:0.5rem;font-size:0.75rem;">ยังไม่มีข้อมูล</div>';
+  }
+  
+  // LINE Quota
+  if (data.lineQuota) {
+    const remaining = data.lineQuota.remaining || (data.lineQuota.limit - data.lineQuota.used);
+    document.getElementById('lineRemaining').textContent = remaining;
+    document.getElementById('lineLimit').textContent = data.lineQuota.limit;
+    const percent = (data.lineQuota.used / data.lineQuota.limit) * 100;
+    document.getElementById('quotaFill').style.width = Math.min(percent, 100) + '%';
+    // เปลี่ยนสีตาม remaining
+    const remainEl = document.getElementById('lineRemaining');
+    if (remaining < 50) { remainEl.style.color = '#ef4444'; document.getElementById('quotaFill').style.background = 'linear-gradient(90deg, #f97316, #ef4444)'; }
+    else if (remaining < 100) { remainEl.style.color = '#f97316'; }
+    else { remainEl.style.color = '#22c55e'; }
+  }
+  
+  // Submit Time Chart
+  if (data.submitTimeStats && data.submitTimeStats.weeks) {
+    const target = data.submitTimeStats.target || 14;
+    const weeks = data.submitTimeStats.weeks.slice(-10); // Last 10
+    
+    // Helper function to create bar
+    const createBar = (hour, time, date, day) => {
+      if (!hour) return '';
+      const heightPercent = Math.min((hour / 18) * 100, 100);
+      const isLate = hour > target;
+      const dayLabel = day === 'Friday' ? 'ศ' : 'จ';
+      const dateParts = date.split('-');
+      const dateLabel = dayLabel + ' ' + dateParts[1] + '/' + dateParts[2];
+      const timeLabel = time ? time.substring(0, 5) : '--:--';
+      return `<div class="submit-bar ${isLate ? 'late' : ''}" style="height:${heightPercent}%" title="${date}: ${time}">
+        <span class="submit-bar-time">${timeLabel}</span>
+        <span class="submit-bar-label">${dateLabel}</span>
+      </div>`;
+    };
+    
+    // Helper to calculate average
+    const calcAvg = (hours) => {
+      if (hours.length === 0) return '--:--';
+      const avg = hours.reduce((a, b) => a + b, 0) / hours.length;
+      const h = Math.floor(avg);
+      const m = Math.round((avg - h) * 60);
+      return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+    };
+    
+    // Build charts
+    let awHtml = '', mkHtml = '', bothHtml = '';
+    let awHours = [], mkHours = [], bothHours = [];
+    
+    weeks.forEach(w => {
+      if (w.awHour) { awHtml += createBar(w.awHour, w.awTime, w.date, w.day); awHours.push(w.awHour); }
+      if (w.mkHour) { mkHtml += createBar(w.mkHour, w.mkTime, w.date, w.day); mkHours.push(w.mkHour); }
+      if (w.bothHour) { bothHtml += createBar(w.bothHour, w.bothTime, w.date, w.day); bothHours.push(w.bothHour); }
+    });
+    
+    const emptyMsg = '<div style="color:var(--text-secondary);text-align:center;padding:1rem;font-size:0.7rem;">ยังไม่มีข้อมูล</div>';
+    document.getElementById('submitChartAw').innerHTML = awHtml || emptyMsg;
+    document.getElementById('submitChartMk').innerHTML = mkHtml || emptyMsg;
+    document.getElementById('submitChartBoth').innerHTML = bothHtml || emptyMsg;
+    
+    document.getElementById('avgAwTime').textContent = calcAvg(awHours);
+    document.getElementById('avgMkTime').textContent = calcAvg(mkHours);
+    document.getElementById('avgBothTime').textContent = calcAvg(bothHours);
+  }
+  
+  // Challenge Stats (show MK/AW status on challenge day)
+  const now = new Date();
+  const day = now.getDay();
+  if (day === 1 || day === 5) {
+    document.getElementById('challengeStats').style.display = 'flex';
+    const mkDone = data.mtk?.campaigns?.filter(c => c.status === 'Done').length || 0;
+    const mkTotal = data.mtk?.campaigns?.length || 0;
+    const awDone = data.arp?.campaigns?.filter(c => c.status === 'Done').length || 0;
+    const awTotal = data.arp?.campaigns?.length || 0;
+    document.getElementById('chMkStatus').textContent = mkDone + '/' + mkTotal;
+    document.getElementById('chAwStatus').textContent = awDone + '/' + awTotal;
+  }
   
   // Below Stats
   if (data.belowStats) {
