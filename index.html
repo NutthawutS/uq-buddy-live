@@ -598,6 +598,7 @@
   <script>
 // === STATE ===
 let API_URL = localStorage.getItem('uq_api_url') || '';
+let isAllComplete = false; // ✅ Track if MK+AW are complete
 let isConnected = false;
 let isUsingDemo = true;
 
@@ -662,14 +663,24 @@ function updateChallenge() {
     const deadline = new Date(); deadline.setHours(14, 0, 0, 0);
     nextInfo.style.display = 'none';
     
-    if (now >= deadline) {
+    // ✅ แสดง "จบ Challenge" เมื่อ complete เท่านั้น
+    if (isAllComplete) {
       banner.classList.add('next');
       title.textContent = '🎉 จบ Challenge!';
-      desc.textContent = 'เจอกัน Challenge ถัดไป!';
+      desc.textContent = 'เสร็จหมดแล้ว! เจอกัน Challenge ถัดไป';
       display.textContent = '✨';
       label.textContent = 'เก่งมาก!';
+    } else if (now >= deadline) {
+      // หลัง deadline แต่ยังไม่เสร็จ
+      banner.classList.remove('next');
+      banner.style.background = 'linear-gradient(135deg, rgba(239,68,68,0.2), rgba(249,115,22,0.2))';
+      title.textContent = '⚠️ Challenge วัน' + dayName;
+      desc.textContent = 'เลย 14:00 แล้ว! รีบทำให้เสร็จ';
+      display.textContent = '⏰';
+      label.textContent = 'เลยเวลา';
     } else {
       banner.classList.remove('next');
+      banner.style.background = '';
       title.textContent = '🔥 Challenge วัน' + dayName + '!';
       desc.textContent = 'Submit MK+AW ก่อน 14:00 เพื่อรับ Badge!';
       const diff = deadline - now;
@@ -681,6 +692,7 @@ function updateChallenge() {
     }
   } else {
     banner.classList.add('next');
+    banner.style.background = '';
     title.textContent = '🎮 Next Challenge';
     const daysToFri = (5 - day + 7) % 7 || 7;
     const daysToMon = (1 - day + 7) % 7 || 7;
@@ -787,18 +799,27 @@ async function loadData() {
 
 function loadDemo() {
   render({
-    reportWeek: 'Demo Mode',
+    reportWeek: 'Demo Mode (22-28 Dec 2024)',
     mtk: { progress: { done: 3, total: 4 }, campaigns: [{ name: 'Linen', status: 'Done' }, { name: 'Holiday', status: 'Done' }, { name: 'Denim', status: 'Done' }, { name: 'Masterpiece', status: 'Pending' }] },
     arp: { progress: { done: 2, total: 4 }, campaigns: [{ name: 'Linen', status: 'Done' }, { name: 'Holiday', status: 'Done' }, { name: 'Denim', status: 'Pending' }, { name: 'Masterpiece', status: 'Pending' }] },
-    leaderboard: [{ name: 'หอกอ', time: '11:23', count: 5, badges: { fast: 3, early: 2, complete: 1, carry: 2 } }, { name: 'พี่เบนซ์', time: '11:45', count: 2, badges: { fast: 1, early: 1, complete: 0, carry: 0 } }],
-    badges: { totalFast: 4, totalEarly: 3, totalComplete: 1, totalCarry: 2 },
+    friends: {
+      mtk: { neon: 'Done', mdg: 'Pending' },
+      arp: { neon: 'Done', mdg: 'Done' }
+    },
+    leaderboard: [
+      { name: 'หอกอ', time: '11:23', count: 5, badges: { fast: 3, early: 2, complete: 1, carry: 2 } }, 
+      { name: 'พี่เบนซ์', time: '11:45', count: 2, badges: { fast: 1, early: 1, complete: 0, carry: 0 } },
+      { name: 'น้องนิว', time: '12:30', count: 3, badges: { fast: 0, early: 1, complete: 1, carry: 1 } }
+    ],
+    badges: { totalFast: 4, totalEarly: 4, totalComplete: 2, totalCarry: 3 },
     streak: 3,
+    earlyBirds: ['หอกอ', 'พี่เบนซ์'],
     belowStats: { traffic: 2, vdo: 3, awareness: 1 },
     lineQuota: { used: 45, limit: 300, remaining: 255 },
     hallOfFame: [
       { name: 'หอกอ', title: '🌟ดาวรุ่งรีพอร์ท', fast: 3, early: 2, complete: 1, carry: 2, total: 8 },
-      { name: 'พี่เบนซ์', title: '', fast: 1, early: 1, complete: 0, carry: 0, total: 2 },
-      { name: 'น้องนิว', title: '', fast: 0, early: 1, complete: 1, carry: 1, total: 3 }
+      { name: 'น้องนิว', title: '', fast: 0, early: 1, complete: 1, carry: 1, total: 3 },
+      { name: 'พี่เบนซ์', title: '', fast: 1, early: 1, complete: 0, carry: 0, total: 2 }
     ],
     submitTimeStats: {
       weeks: [
@@ -843,6 +864,12 @@ function render(data) {
       `<div class="campaign-item ${c.status.toLowerCase()}"><span>${c.name}</span><span class="campaign-status ${c.status.toLowerCase()}">${c.status === 'Done' ? '🟢 Done' : '🟠 Pending'}</span></div>`
     ).join('');
   });
+  
+  // ✅ Check if MK+AW are complete
+  const mtkComplete = data.mtk?.progress?.done === data.mtk?.progress?.total && data.mtk?.progress?.total > 0;
+  const arpComplete = data.arp?.progress?.done === data.arp?.progress?.total && data.arp?.progress?.total > 0;
+  isAllComplete = mtkComplete && arpComplete;
+  updateChallenge(); // Refresh challenge banner with new state
   
   // ✅ Load Friends status from API
   if (data.friends) {
